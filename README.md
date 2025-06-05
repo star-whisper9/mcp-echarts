@@ -1,6 +1,6 @@
 # MCP-ECharts
 
-MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生成服务，支持通过 [Model Context Protocol (MCP)](https://github.com/modelcontext/modelcontext-protocol) 协议远程调用生成各类图表，并以图片形式输出(Server-Side Rendering)。
+MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生成服务，支持通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 协议远程调用生成各类图表，并以图片形式输出(Server-Side Rendering)。
 
 ## 功能特性
 
