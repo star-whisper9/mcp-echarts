@@ -9,7 +9,7 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import * as Charts from "../echarts/index.js";
-import { chartTypes } from "../util.js";
+import { ChartTypes } from "../schema.js";
 
 export const createServer = () => {
   // 初始化服务器实例（无连接状态）
@@ -55,7 +55,7 @@ function registerTools(server: Server) {
   // 工具请求处理器
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const chartType =
-      chartTypes[request.params.name as keyof typeof chartTypes];
+      ChartTypes[request.params.name as keyof typeof ChartTypes];
 
     if (!chartType) {
       throw new McpError(

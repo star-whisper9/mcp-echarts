@@ -18,7 +18,3 @@ export function savePNG(content: Buffer): string {
     });
   return `${baseUrl}/${fileName}`;
 }
-
-export const chartTypes = {
-  createBarChart: "bar",
-} as const;
