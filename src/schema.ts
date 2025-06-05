@@ -25,6 +25,7 @@ export type ToolInput = z.infer<typeof ToolSchema.shape.inputSchema>;
  */
 export const ChartTypes = {
   barOnGrid: "barOnGrid",
+  lineOnGrid: "lineOnGrid",
 } as const;
 
 /**
