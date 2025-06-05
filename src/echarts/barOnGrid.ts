@@ -17,10 +17,12 @@ const schema = z.object({
   dark: z.boolean().default(false).describe("是否使用暗色主题"),
   options: z
     .object({
-      title: z.object({
-        text: z.string().default("柱状图").describe("图表标题"),
-        subtext: z.string().optional().describe("图表副标题"),
-      }),
+      title: z
+        .object({
+          text: z.string().optional().describe("图表标题"),
+          subtext: z.string().optional().describe("图表副标题"),
+        })
+        .optional(),
       legend: z
         .object({
           data: z
@@ -43,7 +45,7 @@ const schema = z.object({
           rotate: z.number().default(0).optional().describe("X轴标签旋转角度"),
         }),
         data: z
-          .array(z.string().describe("X轴分类数据"))
+          .array(z.string())
           .optional()
           .describe("X轴分类数据，若 type 为 'category' 时必填"),
       }),
@@ -58,7 +60,10 @@ const schema = z.object({
         z.object({
           type: z.literal("bar").describe("系列类型，固定为 'bar'"),
           name: z.string().describe("系列名称"),
-          stack: z.string().optional().describe("系列堆叠ID"),
+          stack: z
+            .string()
+            .optional()
+            .describe("系列堆叠名称，若需要堆叠时必填"),
           barWidth: z
             .union([z.string(), z.number()])
             .optional()
@@ -71,15 +76,17 @@ const schema = z.object({
             .array(
               z.union([
                 z.number().describe("数据值"),
-                z.object({
-                  value: z.number().describe("数据值"),
-                  name: z.string().optional().describe("数据名称"),
-                  itemStyle: z
-                    .object({
-                      color: z.string().optional().describe("数据项颜色"),
-                    })
-                    .optional(),
-                }),
+                z
+                  .object({
+                    value: z.number().describe("数据值"),
+                    name: z.string().optional().describe("数据名称"),
+                    itemStyle: z
+                      .object({
+                        color: z.string().optional().describe("数据项颜色"),
+                      })
+                      .optional(),
+                  })
+                  .describe("对象形式数据项"),
               ])
             )
             .describe("数据数组，支持单个数值或对象形式"),
