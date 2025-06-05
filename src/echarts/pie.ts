@@ -1,16 +1,13 @@
-import * as echarts from "echarts";
-import { z } from "zod";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
+import { ToolInput } from "../schema";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { createCanvas } from "canvas";
 import { savePNG } from "../util.js";
-import type { ToolInput } from "../schema.js";
-import { DefaultGridOptions } from "../schema.js";
+import * as echarts from "echarts";
 import merge from "lodash/merge.js";
+import { DefaultChartOptions } from "../schema.js";
 
-/**
- * 定义柱状图的输入参数
- */
 const schema = z.object({
   width: z.number().default(800).describe("图表宽度"),
   height: z.number().default(600).describe("图表高度"),
@@ -35,43 +32,20 @@ const schema = z.object({
         })
         .optional()
         .describe("图例配置，可选"),
-      xAxis: z.object({
-        type: z
-          .enum(["category", "value", "time"])
-          .default("category")
-          .describe("X轴类型"),
-        name: z.string().optional().describe("X轴名称"),
-        axisLabel: z.object({
-          rotate: z.number().default(0).optional().describe("X轴标签旋转角度"),
-        }),
-        data: z
-          .array(z.string())
-          .optional()
-          .describe("X轴分类数据，若 type 为 'category' 时必填"),
-      }),
-      yAxis: z.object({
-        type: z
-          .enum(["value", "category", "time"])
-          .default("value")
-          .describe("Y轴类型"),
-        name: z.string().optional().describe("Y轴名称"),
-      }),
       series: z.array(
         z.object({
-          type: z.literal("bar"),
+          type: z.literal("pie"),
           name: z.string().describe("系列名称"),
-          stack: z
-            .string()
+          radius: z
+            .union([
+              z.string(),
+              z.number(),
+              z.array(z.union([z.string(), z.number()])),
+            ])
             .optional()
-            .describe("系列堆叠名称，若需要堆叠时必填"),
-          barWidth: z
-            .union([z.string(), z.number()])
-            .optional()
-            .describe("柱状图宽度，可以是百分比或具体像素值"),
-          barGap: z
-            .union([z.string(), z.number()])
-            .optional()
-            .describe("柱状图间距，可以是百分比或具体像素值"),
+            .describe(
+              "饼图半径，可以是单个值或数组，当是数组时，首个值为内半径，第二个值为外半径"
+            ),
           data: z
             .array(
               z.union([
@@ -100,8 +74,8 @@ const schema = z.object({
  * Tool 导出
  */
 const tool: Tool = {
-  name: "barOnGrid",
-  description: "创建直角坐标系柱状图",
+  name: "pie",
+  description: "创建饼图",
   inputSchema: zodToJsonSchema(schema) as ToolInput,
 };
 
@@ -119,7 +93,7 @@ async function create(input: Record<string, any>): Promise<string> {
     dark ? "dark" : null
   );
 
-  const defaultOptions = merge({}, DefaultGridOptions, {
+  const defaultOptions = merge({}, DefaultChartOptions, {
     backgroundColor: dark ? "#333" : "#fff",
   });
 
@@ -131,8 +105,8 @@ async function create(input: Record<string, any>): Promise<string> {
   return savePNG(buffer);
 }
 
-export const barOnGrid = {
-  schema,
+export const pie = {
   tool,
+  schema,
   create,
 };

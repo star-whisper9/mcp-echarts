@@ -3,3 +3,4 @@
  */
 export {barOnGrid as "barOnGrid"} from "./barOnGrid.js";
 export {lineOnGrid as "lineOnGrid"} from "./lineOnGrid.js";
+export { pie as "pie" } from "./pie.js";

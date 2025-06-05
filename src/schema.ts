@@ -4,7 +4,7 @@ import { ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 /**
  * 全局图表默认选项，用于和具体坐标系图混合
  */
-const DefaultChartOptions = {
+export const DefaultChartOptions = {
   title: {
     left: "center",
     top: "top",
@@ -26,6 +26,7 @@ export type ToolInput = z.infer<typeof ToolSchema.shape.inputSchema>;
 export const ChartTypes = {
   barOnGrid: "barOnGrid",
   lineOnGrid: "lineOnGrid",
+  pie: "pie",
 } as const;
 
 /**
