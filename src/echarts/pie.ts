@@ -1,12 +1,12 @@
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { ToolInput } from "../schema";
+import { ToolInput } from "../models/schema";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { createCanvas } from "canvas";
-import { savePNG } from "../util.js";
+import { savePNG } from "../utils/fileOutput.js";
 import * as echarts from "echarts";
 import merge from "lodash/merge.js";
-import { DefaultChartOptions } from "../schema.js";
+import { DefaultChartOptions } from "../models/schema.js";
 
 const schema = z.object({
   width: z.number().default(800).describe("图表宽度"),

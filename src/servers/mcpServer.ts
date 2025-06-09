@@ -9,7 +9,7 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import * as Charts from "../echarts/index.js";
-import { ChartTypes } from "../schema.js";
+import { ChartTypes } from "../models/schema.js";
 
 export const createServer = () => {
   // 初始化服务器实例（无连接状态）

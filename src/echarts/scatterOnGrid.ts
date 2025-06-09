@@ -3,9 +3,9 @@ import { z } from "zod";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { createCanvas } from "canvas";
-import { savePNG } from "../util.js";
-import type { ToolInput } from "../schema.js";
-import { DefaultGridOptions } from "../schema.js";
+import { savePNG } from "../utils/fileOutput.js";
+import type { ToolInput } from "../models/schema.js";
+import { DefaultGridOptions } from "../models/schema.js";
 import merge from "lodash/merge.js";
 
 /**

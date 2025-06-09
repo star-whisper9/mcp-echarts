@@ -2,20 +2,6 @@ import { z } from "zod";
 import { ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 
 /**
- * 全局图表默认选项，用于和具体坐标系图混合
- */
-export const DefaultChartOptions = {
-  title: {
-    left: "center",
-    top: "top",
-  },
-  legend: {
-    icon: "roundRect",
-    top: "bottom",
-  },
-};
-
-/**
  * Mcp Tool Input 类型封装
  */
 export type ToolInput = z.infer<typeof ToolSchema.shape.inputSchema>;
@@ -28,7 +14,22 @@ export const ChartTypes = {
   lineOnGrid: "lineOnGrid",
   pie: "pie",
   scatterOnGrid: "scatterOnGrid",
+  scatterOnGeo: "scatterOnGeo",
 } as const;
+
+/**
+ * 全局图表默认选项，用于和具体坐标系图混合
+ */
+export const DefaultChartOptions = {
+  title: {
+    left: "center",
+    top: "top",
+  },
+  legend: {
+    icon: "roundRect",
+    top: "bottom",
+  },
+};
 
 /**
  * 直角坐标系默认选项
@@ -82,7 +83,7 @@ export const DefaultRadarOptions = {
 /**
  * 地图默认选项
  */
-export const DefaultMapOptions = {
+export const DefaultGeoOptions = {
   ...DefaultChartOptions,
   geo: {
     roam: true,
