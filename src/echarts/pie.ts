@@ -46,6 +46,20 @@ const schema = z.object({
             .describe(
               "饼图半径，可以是单个值或数组，当是数组时，首个值为内半径，第二个值为外半径"
             ),
+          roseType: z
+            .enum(["radius", "area"])
+            .optional()
+            .describe(
+              "玫瑰图类型，设置此项时绘制为南丁格尔玫瑰图。可选'radius' 或 'area'"
+            ),
+          itemStyle: z
+            .object({
+              borderRadius: z
+                .number()
+                .optional()
+                .describe("数据项圆角半径，适用于南丁格尔玫瑰图"),
+            })
+            .optional(),
           data: z
             .array(
               z.union([
@@ -75,7 +89,7 @@ const schema = z.object({
  */
 const tool: Tool = {
   name: "pie",
-  description: "创建饼图",
+  description: "创建饼图或南丁格尔玫瑰图",
   inputSchema: zodToJsonSchema(schema) as ToolInput,
 };
 
