@@ -1,5 +1,5 @@
 /**
- * MCP 服务器实现
+ * Server 实现
  */
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
@@ -11,8 +11,46 @@ import {
 import * as Charts from "../echarts/index.js";
 import { ChartTypes } from "../models/schema.js";
 
-export const createServer = () => {
-  // 初始化服务器实例（无连接状态）
+/**
+ * stdio 传输调用
+ */
+export async function runStdioServer(): Promise<void> {
+  const server = createServer();
+  const { run } = await import("./stdio.js");
+  await run(server);
+}
+
+/**
+ * SSE 传输调用
+ * TODO dummy method now
+ */
+export async function runSSEServer(
+  endpoint: string = "/sse",
+  port: number = 1122,
+  host: string = "127.0.0.1",
+  cors: string[]
+): Promise<void> {
+  const server = createServer();
+  const { run } = await import("./sse.js");
+  await run(server, endpoint, port, host, cors);
+}
+
+/**
+ * Streamable HTTP 传输调用
+ * TODO dummy method now
+ */
+export async function runHTTPServer(
+  endpoint: string = "/mcp",
+  port: number = 1122,
+  host: string = "127.0.0.1",
+  cors: string[] = []
+): Promise<void> {
+  // const server = createServer();
+  // const { run } = await import("./http.js");
+  // await run(server, endpoint, port, host, cors);
+}
+
+const createServer = (): Server => {
   const server = new Server(
     {
       name: "ECharts",
@@ -25,28 +63,29 @@ export const createServer = () => {
     }
   );
 
-  server.onerror = (error) => console.error("[MCP Server] error: ", error);
-  server.onclose = () => console.log("[MCP Server] Server Closed");
+  // 监听事件
+  server.onerror = (error) => {
+    console.error("[MCP Server] error: ", error);
+  };
+  server.onclose = () => {
+    console.log("[MCP Server] Connection Closed");
+  };
+  process.on("SIGINT", () => {
+    console.log("[MCP Server] Received SIGINT, shutting down now...");
+    server.close();
+    process.exit(0);
+  });
 
   registerTools(server);
 
-  // 资源清理
-  const cleanup = async () => {
-    try {
-      await server.close();
-    } catch (error: any) {
-      console.error("[MCP Server] Cleanup failed: ", error);
-    }
-  };
-
-  return { server, cleanup };
+  return server;
 };
 
 /**
  * 注册工具
  * @param server MCP 服务器实例
  */
-function registerTools(server: Server) {
+function registerTools(server: Server): void {
   // 工具列表处理器
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: Object.values(Charts).map((chart) => chart.tool),
