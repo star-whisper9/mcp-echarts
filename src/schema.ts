@@ -27,6 +27,7 @@ export const ChartTypes = {
   barOnGrid: "barOnGrid",
   lineOnGrid: "lineOnGrid",
   pie: "pie",
+  scatterOnGrid: "scatterOnGrid",
 } as const;
 
 /**
