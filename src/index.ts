@@ -1,45 +1,55 @@
 import "dotenv/config";
+
+// init echarts maps before importing servers
+// this is required for correct schema generation
+import { registerMaps } from "./utils/map.js";
+let mapRegStatus = await registerMaps();
+if (!mapRegStatus) {
+  console.warn(
+    "[main] Map registration failed, some features may not work properly."
+  );
+}
+
 import {
   runSSEServer,
   runStdioServer,
   runHTTPServer,
 } from "./servers/server.js";
-import { registerMaps } from "./utils/map.js";
-import { config } from "./models/config.js";
 
-const { transport, port, host, cors } = config.server;
+import { config } from "./models/config.js";
 
 console.log("[main] Server Starting...");
 
 async function main() {
   // init mcp server
   // TODO other transports implementation
-  switch (transport) {
+  switch (config.server.transport) {
     case "stdio":
       await runStdioServer();
       break;
     case "sse":
-      await runSSEServer(`/sse`, port, host, cors);
+      await runSSEServer(`/sse`);
       break;
     case "http":
       // not implemented yet
       // await runHTTPServer(`/mcp`, port, host, cors);
       // break;
-      console.warn("[main] HTTP transport is not implemented yet.");
+      console.warn(
+        "[main] Streamable HTTP transport is not implemented yet. Using SSE instead."
+      );
+      await runSSEServer(`/sse`);
+      break;
     default:
       console.warn(
-        `[main] Unknown transport "${transport}", falling back to stdio transport.`
+        `[main] Unknown transport "${config.server.transport}", falling back to stdio transport.`
       );
       await runStdioServer();
       break;
   }
 
-  // init echarts maps
-  let mapRegStatus = await registerMaps();
-  if (!mapRegStatus) {
-    console.warn(
-      "[main] Map registration failed, some features may not work properly."
-    );
+  if (config.resource.enabled) {
+    const { runResourceServer } = await import("./servers/resourceServer.js");
+    await runResourceServer();
   }
 }
 

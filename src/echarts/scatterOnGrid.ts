@@ -59,7 +59,6 @@ const schema = z.object({
       series: z.array(
         z.object({
           type: z.literal("scatter"),
-          name: z.string().describe("系列名称"),
           symbolSize: z.union([
             z.number().describe("散点大小"),
             z

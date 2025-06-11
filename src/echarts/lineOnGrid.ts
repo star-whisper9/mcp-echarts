@@ -59,7 +59,6 @@ const schema = z.object({
       series: z.array(
         z.object({
           type: z.literal("line"),
-          name: z.string().describe("系列名称"),
           stack: z
             .string()
             .optional()

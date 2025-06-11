@@ -1,7 +1,9 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import http from "http";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import { debug } from "console";
+
+import { config } from "../models/config.js";
+const { port, host, cors } = config.server;
 
 /**
  * 检查 CORS 策略并设置响应头
@@ -38,13 +40,7 @@ function corsCheck(
  * @param port 监听端口
  * @param host 监听地址
  */
-export async function run(
-  mcpServer: Server,
-  endpoint: string,
-  port: number,
-  host: string,
-  cors: string[]
-): Promise<void> {
+export async function run(mcpServer: Server, endpoint: string): Promise<void> {
   // client 连接列表
   const clients: Record<string, SSEServerTransport> = {};
 

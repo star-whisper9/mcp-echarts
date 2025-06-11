@@ -41,7 +41,6 @@ const schema = z.object({
     series: z.array(
       z.object({
         type: z.literal("scatter"),
-        name: z.string().describe("系列名称"),
         coordinateSystem: z.literal("geo"),
         symbolSize: z.union([
           z.number().describe("散点大小"),
@@ -67,6 +66,18 @@ const schema = z.object({
           })
           .optional()
           .describe("散点样式配置"),
+        label: z
+          .object({
+            show: z.boolean().default(true).describe("是否显示标签"),
+            position: z
+              .enum(["inside", "top", "bottom", "left", "right"])
+              .optional()
+              .describe("标签位置")
+              .default("top"),
+            formatter: z.string().describe("标签格式化字符串函数，"),
+          })
+          .optional()
+          .describe("散点标签配置"),
         data: z
           .array(
             z.union([
@@ -75,6 +86,18 @@ const schema = z.object({
                 .object({
                   value: z.array(z.number()).describe("数据值数组"),
                   name: z.string().optional().describe("数据名称"),
+                  label: z
+                    .object({
+                      show: z.boolean().default(true).describe("是否显示标签"),
+                      position: z
+                        .enum(["inside", "top", "bottom", "left", "right"])
+                        .optional()
+                        .describe("标签位置")
+                        .default("top"),
+                      formatter: z.string().describe("标签格式化字符串"),
+                    })
+                    .optional()
+                    .describe("单个点的标签配置"),
                 })
                 .describe("对象形式的数据项"),
             ])

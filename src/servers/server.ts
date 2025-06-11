@@ -24,15 +24,10 @@ export async function runStdioServer(): Promise<void> {
  * SSE 传输调用
  * TODO dummy method now
  */
-export async function runSSEServer(
-  endpoint: string = "/sse",
-  port: number = 1122,
-  host: string = "127.0.0.1",
-  cors: string[]
-): Promise<void> {
+export async function runSSEServer(endpoint: string = "/sse"): Promise<void> {
   const server = createServer();
   const { run } = await import("./sse.js");
-  await run(server, endpoint, port, host, cors);
+  await run(server, endpoint);
 }
 
 /**
@@ -66,9 +61,6 @@ const createServer = (): Server => {
   // 监听事件
   server.onerror = (error) => {
     console.error("[MCP Server] error: ", error);
-  };
-  server.onclose = () => {
-    console.log("[MCP Server] Connection Closed");
   };
   process.on("SIGINT", () => {
     console.log("[MCP Server] Received SIGINT, shutting down now...");
