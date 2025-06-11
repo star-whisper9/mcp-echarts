@@ -68,7 +68,8 @@ export async function run(
         closed = true;
 
         try {
-          server.close();
+          // 客户端断连后断开对应 transport
+          mcpServer.close();
         } catch (error) {
           console.error("[SSE] Error closing connection:", error);
         }
@@ -77,7 +78,6 @@ export async function run(
 
       try {
         await mcpServer.connect(transport);
-
         await transport.send({
           jsonrpc: "2.0",
           method: "sse/connection",
@@ -112,7 +112,10 @@ export async function run(
       return;
     }
 
-    // 默认返回 404
+    // 任何不匹配请求返回 404
+    console.info(
+      `[SSE] Unhandled request: ${req.method} ${req.url} from ${req.socket.remoteAddress}`
+    );
     res.writeHead(404);
     return res.end("Not Found");
   });
