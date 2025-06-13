@@ -31,13 +31,7 @@ async function main() {
       await runSSEServer(`/sse`);
       break;
     case "http":
-      // not implemented yet
-      // await runHTTPServer(`/mcp`, port, host, cors);
-      // break;
-      console.warn(
-        "[main] Streamable HTTP transport is not implemented yet. Using SSE instead."
-      );
-      await runSSEServer(`/sse`);
+      await runHTTPServer(`/mcp`);
       break;
     default:
       console.warn(

@@ -1,5 +1,6 @@
 /**
- * 静态资源服务器，提供生成的图像访问链接
+ * 简易静态资源服务器
+ * 用于演示/测试，不建议在生产环境使用
  */
 import http from "http";
 import fs from "fs";
@@ -15,7 +16,7 @@ export async function runResourceServer(): Promise<void> {
       return res.end("Bad Request");
     }
 
-    // 防止路径穿越攻击
+    // 路径穿越攻击检查
     const safePath = path
       .normalize(decodeURIComponent(req.url))
       .replace(/^(\.\.[\/\\])+/, "");
@@ -34,6 +35,7 @@ export async function runResourceServer(): Promise<void> {
 
       const stream = fs.createReadStream(filePath);
       stream.on("open", () => {
+        // 服务器应只会生成如下类型的静态资源，因此未处理额外 MIME 类型
         const mimeType =
           {
             ".html": "text/html",

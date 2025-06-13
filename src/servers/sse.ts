@@ -1,77 +1,49 @@
+/**
+ * SSE 传输（Legacy）已被弃用
+ * 此类传输的实现保留以支持旧版客户端
+ * 新的传输应使用 Streamable HTTP 实现
+ */
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import http from "http";
+import express, { Request, Response } from "express";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 
 import { config } from "../models/config.js";
 const { port, host, cors } = config.server;
-
-/**
- * 检查 CORS 策略并设置响应头
- *
- * @param req request 对象
- * @param res response 对象
- * @param cors cors 策略列表
- * @returns 如果不允许跨域，则返回 403 Forbidden
- *          如果允许跨域，则设置响应头并返回 undefined
- */
-function corsCheck(
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
-  cors: string[]
-): http.ServerResponse | void {
-  const origin = req.headers.origin;
-  if (!cors.includes("*")) {
-    // 只允许列表中的域
-    if (origin && !cors.includes(origin)) {
-      res.writeHead(403);
-      return res.end("Forbidden");
-    } else {
-      res.setHeader("Access-Control-Allow-Origin", origin || "*");
-    }
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
-  }
-}
+import { corsCheck } from "../utils/httpUtil.js";
 
 /**
  * 运行 SSE Server
  * @param mcpServer MCP 服务器实例
  * @param endpoint SSE 端点 (例如 /sse)
- * @param port 监听端口
- * @param host 监听地址
  */
 export async function run(mcpServer: Server, endpoint: string): Promise<void> {
-  // client 连接列表
   const clients: Record<string, SSEServerTransport> = {};
+  const app = express();
 
-  // 创建 HTTP 服务
-  const server = http.createServer(async (req, res) => {
+  // 跨域检查
+  app.use((req, res, next) => {
     corsCheck(req, res, cors);
+    next();
+  });
 
-    if (!req.url) {
-      res.writeHead(400).end("No URL");
-      return;
-    }
+  // SSE 建立连接
+  app.get(endpoint, async (req: Request, res: Response) => {
+    const transport = new SSEServerTransport("/messages", res);
+    clients[transport.sessionId] = transport;
 
-    // Get 建立连接
-    if (req.url === endpoint && req.method === "GET") {
-      const transport = new SSEServerTransport("/messages", res);
-      clients[transport.sessionId] = transport;
+    // 尚未实现会话恢复
+    let closed = false;
+    req.on("close", async () => {
+      closed = true;
+      try {
+        mcpServer.close();
+      } catch (error) {
+        console.error("[SSE] Error closing connection:", error);
+      }
+      delete clients[transport.sessionId];
+    });
 
-      // 未实现异常断开的会话恢复，在 MCP 标准中应实现此功能
-      let closed = false;
-      res.on("close", async () => {
-        closed = true;
-
-        try {
-          // 客户端断连后断开对应 transport
-          mcpServer.close();
-        } catch (error) {
-          console.error("[SSE] Error closing connection:", error);
-        }
-        delete clients[transport.sessionId];
-      });
-
+    (async () => {
       try {
         await mcpServer.connect(transport);
         await transport.send({
@@ -85,38 +57,49 @@ export async function run(mcpServer: Server, endpoint: string): Promise<void> {
         if (!closed) {
           console.error("[SSE] Error during connection:", error);
           res.writeHead(500);
-          return res.end("Internal Server Error");
+          return res.json({
+            jsonrpc: "2.0",
+            error: {
+              code: -32603,
+              message: "Internal Server Error, connection failed",
+            },
+          });
         }
       }
+    })();
+  });
 
+  // POST 消息处理
+  app.post("/messages", async (req: Request, res: Response) => {
+    const sessionId = req.query.sessionId as string | undefined;
+    if (!sessionId || !clients[sessionId]) {
+      res.status(400).json({
+        jsonrpc: "2.0",
+        error: {
+          code: -32600,
+          message: "Invalid sessionId or session not found",
+        },
+      });
       return;
     }
+    await clients[sessionId].handlePostMessage(req, res);
+  });
 
-    // 处理客户端 POST 消息
-    if (req.url && req.method === "POST" && req.url.startsWith("/messages")) {
-      const sessionId = new URL(
-        req.url,
-        `http://${host}:${port}`
-      ).searchParams.get("sessionId");
-
-      if (!sessionId || !clients[sessionId]) {
-        res.writeHead(400);
-        return res.end("Invalid session ID");
-      }
-
-      await clients[sessionId].handlePostMessage(req, res);
-      return;
-    }
-
-    // 任何不匹配请求返回 404
+  // 404 处理
+  app.use((req, res) => {
     console.info(
       `[SSE] Unhandled request: ${req.method} ${req.url} from ${req.socket.remoteAddress}`
     );
-    res.writeHead(404);
-    return res.end("Not Found");
+    res.status(404).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32601,
+        message: "Method not found",
+      },
+    });
   });
 
-  server.listen(port, host, () => {
+  app.listen(port, host, () => {
     console.log(`[SSE] Server running at http://${host}:${port}${endpoint}`);
   });
 }

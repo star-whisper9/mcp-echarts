@@ -22,7 +22,6 @@ export async function runStdioServer(): Promise<void> {
 
 /**
  * SSE 传输调用
- * TODO dummy method now
  */
 export async function runSSEServer(endpoint: string = "/sse"): Promise<void> {
   const server = createServer();
@@ -32,17 +31,10 @@ export async function runSSEServer(endpoint: string = "/sse"): Promise<void> {
 
 /**
  * Streamable HTTP 传输调用
- * TODO dummy method now
  */
-export async function runHTTPServer(
-  endpoint: string = "/mcp",
-  port: number = 1122,
-  host: string = "127.0.0.1",
-  cors: string[] = []
-): Promise<void> {
-  // const server = createServer();
-  // const { run } = await import("./http.js");
-  // await run(server, endpoint, port, host, cors);
+export async function runHTTPServer(endpoint: string = "/mcp"): Promise<void> {
+  const { run } = await import("./http.js");
+  await run(createServer, endpoint);
 }
 
 const createServer = (): Server => {
