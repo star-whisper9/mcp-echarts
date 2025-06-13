@@ -13,9 +13,11 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 ## 使用
 
-1. 前往 Releases 下载最新版本的发布包
-2. 解压并按照 Stdio MCP 服务在你使用的客户端中进行配置，你需要关注以下配置：
-   - 启动指令：`node path/to/index.js`
+由于 canvas 依赖于平台，在发布 npm 包前仅支持自编译使用。
+
+1. 在本地安装并编译
+2. 按照 Stdio MCP 服务在你使用的客户端中进行配置，你需要关注以下配置：
+   - 启动指令：`node path/to/build/index.js`
    - 环境变量配置：查阅下表
 
 | 建议修改 | 环境变量     | 描述                              | 默认值                  |
@@ -29,7 +31,7 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 3. (可选) 由于版权问题，发布版本身将不带有任何 GeoJSON，若需要使用地图图表，请自行下载需要的 GeoJSON 并放置在 `GEOJSON_PATH` 指定的目录下。JSON 文件的文件名将被注册为地图名称，_建议使用可读名称（例如中国地图可以使用 `china.json`，美国地图可以使用 `usa.json` 等）_。
 
-作为 HTTP 服务部署请查阅下方开发相关。
+作为 HTTP 服务部署请查阅开发相关。
 
 ---
 
@@ -37,6 +39,7 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 ## Todo
 
+- [ ] npm 包发布
 - [ ] 更多图表类型支持
 - [ ] 身份验证
 - [ ] 图表结构优化和默认外观样式优化
