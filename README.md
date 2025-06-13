@@ -13,11 +13,8 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 ## 使用
 
-由于 canvas 依赖于平台，在发布 npm 包前仅支持自编译使用。
-
-1. 在本地安装并编译
-2. 按照 Stdio MCP 服务在你使用的客户端中进行配置，你需要关注以下配置：
-   - 启动指令：`node path/to/build/index.js`
+1. 按照 Stdio MCP 服务在你使用的客户端中进行配置，你需要关注以下配置：
+   - 启动指令：`npx -y @starwhisper9/mcp-echarts`
    - 环境变量配置：查阅下表
 
 | 建议修改 | 环境变量     | 描述                              | 默认值                  |
@@ -39,7 +36,7 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 ## Todo
 
-- [ ] npm 包发布
+- [x] npm 包发布
 - [ ] 更多图表类型支持
 - [ ] 身份验证
 - [ ] 图表结构优化和默认外观样式优化

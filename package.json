@@ -1,22 +1,31 @@
 {
-  "name": "mcp-echarts",
+  "name": "@starwhisper9/mcp-echarts",
   "version": "1.0.0",
   "main": "index.ts",
   "type": "module",
   "bin": {
-    "echarts": "./build/index.js"
+    "mcp-echarts": "./build/index.js"
   },
   "files": [
     "build"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/star-whisper9/mcp-echarts"
+  },
   "scripts": {
     "build": "tsc && chmod +x build/*.js",
     "start": "node build/index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "mcp",
+    "echarts",
+    "visualization",
+    "data-visualization"
+  ],
   "author": "starwhisper9",
   "license": "Apache-2.0",
-  "description": "Generate ECharts by MCP",
+  "description": "Generate ECharts with MCP",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "canvas": "^3.1.0",
