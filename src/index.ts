@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import "dotenv/config";
 
 // init echarts maps before importing servers
@@ -22,7 +23,6 @@ console.log("[main] Server Starting...");
 
 async function main() {
   // init mcp server
-  // TODO other transports implementation
   switch (config.server.transport) {
     case "stdio":
       await runStdioServer();
