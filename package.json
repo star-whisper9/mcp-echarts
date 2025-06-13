@@ -1,7 +1,7 @@
 {
   "name": "@starwhisper9/mcp-echarts",
-  "version": "1.0.0",
-  "main": "index.ts",
+  "version": "1.0.1",
+  "main": "build/index.js",
   "type": "module",
   "bin": {
     "mcp-echarts": "./build/index.js"
@@ -14,7 +14,7 @@
     "url": "https://github.com/star-whisper9/mcp-echarts"
   },
   "scripts": {
-    "build": "tsc && chmod +x build/*.js",
+    "build": "rm -rf build/* && tsc && chmod +x build/*.js",
     "start": "node build/index.js"
   },
   "keywords": [
