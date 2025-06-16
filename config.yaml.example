@@ -1,0 +1,14 @@
+server:
+  transport: http
+  port: 12345
+  host: 0.0.0.0
+  cors:
+    - "*"
+
+resource:
+  resourcePath: /Path/To/ResourceDir
+  enabled: true
+  port: 11223
+  host: 0.0.0.0
+  baseUrl: http://localhost:11223
+  geoJsonPath: /Path/To/GeoJsonDir

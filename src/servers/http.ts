@@ -4,6 +4,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { randomUUID } from "node:crypto";
 
 import { corsCheck } from "../utils/httpUtil.js";
+import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 import { InMemoryEventStore } from "@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js";
 const { port, host, cors } = config.server;
@@ -51,7 +52,7 @@ export async function run(
           try {
             await mcpServer?.close();
           } catch (error) {
-            console.error("[HTTP] Error closing connection:", error);
+            log.error("[HTTP] Error closing connection:", error);
           }
 
           delete clients[sid];
@@ -92,7 +93,7 @@ export async function run(
 
     const lastEvent = req.headers["last-event-id"] as string | undefined;
     if (lastEvent) {
-      console.log(
+      log.info(
         `[HTTP] Client ${sessionId} reconnecting with last event ID: ${lastEvent}`
       );
     }
@@ -119,7 +120,7 @@ export async function run(
       const transport = clients[sessionId].transport;
       await transport!.handleRequest(req, res);
     } catch (error) {
-      console.error("[HTTP] Error handling termination request:", error);
+      log.error("[HTTP] Error handling termination request:", error);
       if (!res.headersSent) {
         res.status(500).json({
           jsonrpc: "2.0",
@@ -135,7 +136,7 @@ export async function run(
   });
 
   app.use((req, res) => {
-    console.info(
+    log.info(
       `[HTTP] Unhandled request: ${req.method} ${req.url} from ${req.socket.remoteAddress}`
     );
     res.status(404).json({
@@ -148,8 +149,6 @@ export async function run(
   });
 
   app.listen(port, host, () => {
-    console.info(
-      `[HTTP] Server is running at http://${host}:${port}${endpoint}`
-    );
+    log.info(`[HTTP] Server is running at http://${host}:${port}${endpoint}`);
   });
 }

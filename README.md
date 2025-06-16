@@ -1,9 +1,6 @@
 # MCP-ECharts
 
-<center>
-   <img alt="NPM Version" src="https://img.shields.io/npm/v/%40starwhisper9%2Fmcp-echarts">
-   <img alt="NPM Last Update" src="https://img.shields.io/npm/last-update/%40starwhisper9%2Fmcp-echarts">
-</center>
+<img alt="NPM Version" src="https://img.shields.io/npm/v/%40starwhisper9%2Fmcp-echarts"><img alt="NPM Last Update" src="https://img.shields.io/npm/last-update/%40starwhisper9%2Fmcp-echarts">
 
 MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生成服务，支持通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 协议远程调用生成各类图表，并以图片形式输出（Server-Side Rendering）。
 
@@ -56,73 +53,85 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 ## 应用配置
 
-应用配置具有两种传入方式：
+应用配置具有以下传入方式：
 
-- 命令行参数
+- 命令行参数，参见下表
+- YAML 配置文件，通过 `--config-path` 参数传入配置路径。示例参见 [config.yaml.example](./config.yaml.example)
 - **(已弃用)** 环境变量
 
-在当前版本(1.1.0)，出于兼容性考虑仍保留了环境变量参数，但建议使用命令行参数，未来版本可能会移除环境变量配置。
+在当前版本(1.2.0)，出于兼容性考虑仍保留了环境变量参数，不建议继续使用，未来版本可能会移除环境变量配置。
 
-| 命令行           | 环境变量        | 描述                                                          | 默认值                  | 必需 | 可选值                                                                                                                     |
-| ---------------- | --------------- | ------------------------------------------------------------- | ----------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
-| `--transport`    | `MCP_TRANSPORT` | 传输方式                                                      | `stdio`                 | 否   | `stdio`, `sse`, `http`                                                                                                     |
-| `--mcp-port`     | `MCP_PORT`      | MCP 服务端口                                                  | `1122`                  | 否   | 1-65535                                                                                                                    |
-| `--mcp-host`     | `MCP_HOST`      | MCP 服务监听主机                                              | `127.0.0.1`             | 否   | IPv4 地址或域名                                                                                                            |
-| `--cors`         | `MCP_CORS`      | CORS 策略，当传入策略包含 "\*" 时将无视其余规则，允许全部跨域 | `[]`                    | 否   | 包含允许的地址的 JSON 数组字符串 / 每行一个允许地址的 CORS 文本文件路径                                                    |
-| `--res-path`     | `RES_PATH`      | 生成的图片存储路径，建议使用绝对路径                          | `./static`              | 否   | 有写权限的合法的文件系统路径                                                                                               |
-| `--res-enabled`  | `RES_ENABLED`   | 是否启用内置 HTTP 静态资源服务                                | `true`                  | 否   | `true`, `false`                                                                                                            |
-| `--res-port`     | `RES_PORT`      | 内置 HTTP 静态资源服务端口                                    | `1123`                  | 否   | 1-65535                                                                                                                    |
-| `--res-host`     | `RES_HOST`      | 内置 HTTP 静态资源服务监听主机                                | `127.0.0.1`             | 否   | IPv4 地址或域名                                                                                                            |
-| `--res-base-url` | `RES_BASE_URL`  | 内置 HTTP 静态资源服务的基础 URL                              | `http://127.0.0.1:1123` | 否   | 有效的 URL，指向部署的静态服务的地址（MCP 生成内容将返回此地址）                                                           |
-| `--geojson-path` | `GEOJSON_PATH`  | 地图坐标系使用的 GeoJSON 文件路径                             | `./geojson`             | 否   | 有读权限的合法的文件系统路径，内含有效的 GeoJSON 文件。**文件推荐命名为可读的地区名称** ，模型将会获得文件名作为可选地图。 |
+配置的优先级为：**YAML > 命令行参数 > 环境变量 > 默认**。
+
+| 命令行           | 描述                                                          | 默认值                  | 必需 | 可选值                                                                                                                     |
+| ---------------- | ------------------------------------------------------------- | ----------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
+| `--transport`    | 传输方式                                                      | `stdio`                 | 否   | `stdio`, `sse`, `http`                                                                                                     |
+| `--mcp-port`     | MCP 服务端口                                                  | `1122`                  | 否   | 1-65535                                                                                                                    |
+| `--mcp-host`     | MCP 服务监听主机                                              | `127.0.0.1`             | 否   | IPv4 地址或域名                                                                                                            |
+| `--cors`         | CORS 策略，当传入策略包含 "\*" 时将无视其余规则，允许全部跨域 | `[]`                    | 否   | 包含允许的地址的 JSON 数组字符串 / 每行一个允许地址的 CORS 文本文件路径                                                    |
+| `--res-path`     | 生成的图片存储路径，建议使用绝对路径                          | `./static`              | 否   | 有写权限的合法的文件系统路径                                                                                               |
+| `--res-enabled`  | 是否启用内置 HTTP 静态资源服务                                | `true`                  | 否   | `true`, `false`                                                                                                            |
+| `--res-port`     | 内置 HTTP 静态资源服务端口                                    | `1123`                  | 否   | 1-65535                                                                                                                    |
+| `--res-host`     | 内置 HTTP 静态资源服务监听主机                                | `127.0.0.1`             | 否   | IPv4 地址或域名                                                                                                            |
+| `--res-base-url` | 内置 HTTP 静态资源服务的基础 URL                              | `http://127.0.0.1:1123` | 否   | 有效的 URL，指向部署的静态服务的地址（MCP 生成内容将返回此地址）                                                           |
+| `--geojson-path` | 地图坐标系使用的 GeoJSON 文件路径                             | `./geojson`             | 否   | 有读权限的合法的文件系统路径，内含有效的 GeoJSON 文件。**文件推荐命名为可读的地区名称** ，模型将会获得文件名作为可选地图。 |
 
 ---
 
 # 开发
 
-## Todo
+## Todo（优先级排序）
 
 - [x] npm 包发布
+- [ ] 文档
 - [ ] 更多图表类型支持
-- [ ] 可选身份验证
-- [ ] 图表结构优化和默认外观样式优化
-- [ ] _SVG 地图支持_
 - [ ] 更多输出格式支持（优先 SVG 和 HTML）
+- [ ] 图表结构优化和默认外观样式优化
+- [ ] 可选身份验证
+- [ ] _SVG 地图支持_
 
 欢迎提交 PR 或 Issue！
 
-## 目录结构
+## 开始开发
 
-```
-├── src/                # TypeScript 源码
-│   ├── echarts/        # 各类图表实现
-│   ├── servers/        # 服务器实现
-│   ├── models/         # 模型
-│   └── utils/          # 工具函数
-├── build/              # 编译后的 JS 文件
-├── package.json
-├── tsconfig.json
-├── LICENSE
-└── README.md
-```
-
-## 安装依赖
+- 安装依赖
 
 ```bash
 npm install
 ```
 
-## 构建项目
+- 构建项目
 
 ```bash
 npm run build
 ```
 
-## 运行服务
+- 运行服务
 
 ```bash
 npm run start
 ```
+
+### 杂项
+
+#### 日志
+
+日志从 `1.2.0` 开始不再使用基础的 `console`，而是选用了 `log4js`。默认情况下，日志将进行以下输出：
+
+- STDIO 模式：仅输出到文件。
+- 其他模式：同时输出到 STDOUT 和文件。
+
+- 文件记录等级：WARN
+- 控制台记录等级：INFO
+
+- 文件默认存储到：
+  - Windows: `%LOCALAPPDATA%/mcp-echarts/logs` / `os.homedir()/mcp-echarts/logs`
+  - macOS: `os.homedir()/Library/Logs/mcp-echarts`
+  - Linux: `os.homedir()/.mcp-echarts/logs`
+
+目前没有提供配置入口，需要修改 [log.ts](./src/utils/log.ts) 的硬编码代码。
+
+**你应避免在 STDIO 传输时输出任何 STDOUT 日志。如有必要在控制台输出日志请输出 STDERR。**
 
 ## 安全建议
 

@@ -1,5 +1,12 @@
+/**
+ * 配置管理
+ *
+ * 优先级：yaml 文件(--config-path传入) > 命令行参数 > 环境变量
+ */
 import fs from "fs";
 import minimist from "minimist";
+import yaml from "js-yaml";
+import merge from "lodash/merge.js";
 
 const argv = minimist(process.argv.slice(2), {
   alias: {
@@ -11,6 +18,7 @@ const argv = minimist(process.argv.slice(2), {
     "res-host": "resourceHost",
     "res-base-url": "resourceBaseUrl",
     "geojson-path": "geoJsonPath",
+    "config-path": "configPath",
   },
 });
 
@@ -27,7 +35,7 @@ function getTransport(): TransportType {
   if (ALLOWED_TRANSPORTS.includes(t as TransportType)) {
     return t as TransportType;
   }
-  console.warn(
+  console.error(
     `[config] MCP_TRANSPORT is illegal, falling back to "stdio". Possible values: ${ALLOWED_TRANSPORTS.join(
       ", "
     )}`
@@ -45,7 +53,7 @@ function getTransport(): TransportType {
 function getPort(input: string | undefined, defaultPort: number): number {
   const port = input ? parseInt(input, 10) : defaultPort;
   if (Number.isNaN(port) || port < 1 || port > 65535) {
-    console.warn("[config] MCP_PORT is illegal, falling back to 1122");
+    console.error("[config] MCP_PORT is illegal, falling back to 1122");
     return defaultPort;
   }
   return port;
@@ -68,16 +76,13 @@ function getCorsPolicy(): string[] {
         parsedCors.every((item) => typeof item === "string")
       ) {
         if (parsedCors.includes("*")) {
-          console.warn(
+          console.error(
             "[config] CORS policy allows all origins, this may not be secure in production!"
           );
         }
         return parsedCors;
       }
     } catch (e) {
-      console.log(
-        "[config] Cors policy parsing failed, trying to read as a file"
-      );
       try {
         const corsFileContent = fs.readFileSync(cors, "utf-8").trim();
         return corsFileContent
@@ -88,29 +93,56 @@ function getCorsPolicy(): string[] {
       }
     }
   }
-  console.log(
+  console.error(
     "[config] MCP_CORS is not set or malformed, falling back to empty CORS policy"
   );
   return [];
 }
 
-export const config = {
-  server: {
-    transport: getTransport(),
-    port: getPort(argv.mcpPort || process.env.MCP_PORT, 1122),
-    host: argv.mcpHost || process.env.MCP_HOST || "127.0.0.1",
-    cors: getCorsPolicy() || [],
-  },
-  resource: {
-    staticPath: argv.resourcePath || process.env.RES_PATH || "./static",
-    enabled: argv.resourceEnabled || process.env.RES_ENABLED === "true",
-    port: getPort(argv.resourcePort || process.env.RES_PORT, 1123),
-    host: argv.resourceHost || process.env.RES_HOST || "127.0.0.1",
-    baseUrl:
-      argv.resourceBaseUrl ||
-      process.env.RES_BASE_URL ||
-      "http://127.0.0.1:1123",
-    geoJsonPath:
-      argv.geoJsonPath || process.env.GEOJSON_PATH || "./static/geojson/",
-  },
-};
+/**
+ * 获取默认配置
+ * @returns 默认配置对象
+ */
+function getDefaultConfig(): any {
+  return {
+    server: {
+      transport: getTransport(),
+      port: getPort(argv.mcpPort || process.env.MCP_PORT, 1122),
+      host: argv.mcpHost || process.env.MCP_HOST || "127.0.0.1",
+      cors: getCorsPolicy() || [],
+    },
+    resource: {
+      resourcePath: argv.resourcePath || process.env.RES_PATH || "./static",
+      enabled: argv.resourceEnabled || process.env.RES_ENABLED === "true",
+      port: getPort(argv.resourcePort || process.env.RES_PORT, 1123),
+      host: argv.resourceHost || process.env.RES_HOST || "127.0.0.1",
+      baseUrl:
+        argv.resourceBaseUrl ||
+        process.env.RES_BASE_URL ||
+        "http://127.0.0.1:1123",
+      geoJsonPath:
+        argv.geoJsonPath || process.env.GEOJSON_PATH || "./static/geojson/",
+    },
+  };
+}
+
+/**
+ * 读取自定义配置 YAML
+ * @returns 合并的配置
+ */
+function loadConfigFile(): any | null {
+  const configPath = argv.configPath || process.env.CONFIG_PATH;
+  if (!configPath) {
+    return null;
+  }
+
+  let config: any | null = null;
+  try {
+    config = yaml.load(fs.readFileSync(configPath, "utf-8"));
+    return config === null ? null : merge({}, getDefaultConfig(), config);
+  } catch (error) {
+    return null;
+  }
+}
+
+export const config = loadConfigFile() || getDefaultConfig();

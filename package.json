@@ -1,6 +1,6 @@
 {
   "name": "@starwhisper9/mcp-echarts",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "build/index.js",
   "type": "module",
   "bin": {
@@ -32,13 +32,17 @@
     "dotenv": "^16.5.0",
     "echarts": "^5.6.0",
     "express": "^5.1.0",
+    "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "log4js": "^6.9.1",
     "minimist": "^1.2.8",
     "zod": "^3.25.50"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.17",
+    "@types/log4js": "^0.0.33",
     "@types/minimist": "^1.2.5",
     "@types/node": "^22.15.29",
     "typescript": "^5.8.3"

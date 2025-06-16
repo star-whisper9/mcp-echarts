@@ -19,6 +19,7 @@ lib/
 # Env files
 .env*
 !.env.example
+config.yaml
 
 # OS
 .DS_Store
