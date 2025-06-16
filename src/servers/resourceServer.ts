@@ -5,9 +5,10 @@
 import http from "http";
 import fs from "fs";
 import path from "path";
+import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 
-const { port, host, staticPath } = config.resource;
+const { port, host, resourcePath } = config.resource;
 
 export async function runResourceServer(): Promise<void> {
   const server = http.createServer((req, res) => {
@@ -20,8 +21,8 @@ export async function runResourceServer(): Promise<void> {
     const safePath = path
       .normalize(decodeURIComponent(req.url))
       .replace(/^(\.\.[\/\\])+/, "");
-    const filePath = path.join(staticPath, safePath);
-    const relativePath = path.relative(staticPath, filePath);
+    const filePath = path.join(resourcePath, safePath);
+    const relativePath = path.relative(resourcePath, filePath);
     if (relativePath.startsWith("..")) {
       res.writeHead(403);
       return res.end("Forbidden");
@@ -56,6 +57,6 @@ export async function runResourceServer(): Promise<void> {
   });
 
   server.listen(port, host, () => {
-    console.log(`[resource] Static server running at http://${host}:${port}/`);
+    log.info(`[resource] Static server running at http://${host}:${port}/`);
   });
 }

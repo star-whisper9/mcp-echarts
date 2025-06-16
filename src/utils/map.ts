@@ -5,6 +5,7 @@
 import * as echarts from "echarts";
 import fs from "fs/promises";
 import path from "path";
+import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 
 const { geoJsonPath } = config.resource;
@@ -13,7 +14,7 @@ const { geoJsonPath } = config.resource;
  * 注册所有地图
  */
 export async function registerMaps(): Promise<string[]> {
-  console.log("[util] Registering maps from GeoJSON files...");
+  log.info("[util] Registering maps from GeoJSON files...");
   try {
     let availableMaps: string[] = [];
     const files = await fs.readdir(geoJsonPath);
@@ -24,12 +25,9 @@ export async function registerMaps(): Promise<string[]> {
           const geoData = await loadGeoJson(geoName);
           echarts.registerMap(geoName, geoData);
           availableMaps.push(geoName);
-          console.log(`[util] Registered map: ${geoName}`);
+          log.info(`[util] Registered map: ${geoName}`);
         } catch (error) {
-          console.error(
-            `[util] Failed to register map from ${file}.json: `,
-            error
-          );
+          log.error(`[util] Failed to register map from ${file}.json: `, error);
         }
       }
     }
@@ -40,7 +38,7 @@ export async function registerMaps(): Promise<string[]> {
     }
     return availableMaps;
   } catch (error) {
-    console.error("[util] Register maps failed: ", error);
+    log.error("[util] Register maps failed: ", error);
     return [];
   }
 }
@@ -58,7 +56,7 @@ async function loadGeoJson(geoName: string): Promise<any> {
     .readFile(filePath, "utf-8")
     .then((data) => JSON.parse(data))
     .catch((error) => {
-      console.error(`[util] Load GeoJson failed for ${geoName}: `, error);
+      log.error(`[util] Load GeoJson failed for ${geoName}: `, error);
       throw new Error(`Failed to load GeoJson for ${geoName}`);
     });
 }

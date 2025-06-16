@@ -9,6 +9,7 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import * as Charts from "../echarts/index.js";
+import { log } from "../utils/log.js";
 import { ChartTypes } from "../models/schema.js";
 
 /**
@@ -52,10 +53,10 @@ const createServer = (): Server => {
 
   // 监听事件
   server.onerror = (error) => {
-    console.error("[MCP Server] error: ", error);
+    log.error("[MCP Server] error: ", error);
   };
   process.on("SIGINT", () => {
-    console.log("[MCP Server] Received SIGINT, shutting down now...");
+    log.info("[MCP Server] Received SIGINT, shutting down now...");
     server.close();
     process.exit(0);
   });

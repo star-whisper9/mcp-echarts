@@ -6,10 +6,13 @@ import {
   runStdioServer,
   runHTTPServer,
 } from "./servers/server.js";
+import { initLogger, log } from "./utils/log.js";
+
+initLogger();
 
 import { config } from "./models/config.js";
 
-console.log("[main] Server Starting...");
+log.info("[main] Server Starting...");
 
 async function main() {
   // init mcp server
@@ -24,7 +27,7 @@ async function main() {
       await runHTTPServer(`/mcp`);
       break;
     default:
-      console.warn(
+      log.warn(
         `[main] Unknown transport "${config.server.transport}", falling back to stdio transport.`
       );
       await runStdioServer();
@@ -38,7 +41,7 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(
+  log.error(
     "[main] Error when running or starting, shutting down now...",
     error
   );

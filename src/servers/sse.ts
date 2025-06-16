@@ -7,6 +7,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import express, { Request, Response } from "express";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 
+import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 const { port, host, cors } = config.server;
 import { corsCheck } from "../utils/httpUtil.js";
@@ -38,7 +39,7 @@ export async function run(mcpServer: Server, endpoint: string): Promise<void> {
       try {
         mcpServer.close();
       } catch (error) {
-        console.error("[SSE] Error closing connection:", error);
+        log.error("[SSE] Error closing connection:", error);
       }
       delete clients[transport.sessionId];
     });
@@ -55,7 +56,7 @@ export async function run(mcpServer: Server, endpoint: string): Promise<void> {
         });
       } catch (error) {
         if (!closed) {
-          console.error("[SSE] Error during connection:", error);
+          log.error("[SSE] Error during connection:", error);
           res.writeHead(500);
           return res.json({
             jsonrpc: "2.0",
@@ -87,7 +88,7 @@ export async function run(mcpServer: Server, endpoint: string): Promise<void> {
 
   // 404 处理
   app.use((req, res) => {
-    console.info(
+    log.info(
       `[SSE] Unhandled request: ${req.method} ${req.url} from ${req.socket.remoteAddress}`
     );
     res.status(404).json({
@@ -100,6 +101,6 @@ export async function run(mcpServer: Server, endpoint: string): Promise<void> {
   });
 
   app.listen(port, host, () => {
-    console.log(`[SSE] Server running at http://${host}:${port}${endpoint}`);
+    log.info(`[SSE] Server running at http://${host}:${port}${endpoint}`);
   });
 }

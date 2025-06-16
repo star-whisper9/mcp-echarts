@@ -4,9 +4,10 @@
  */
 import fs from "fs/promises";
 import path from "path";
+import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 
-const { staticPath, baseUrl } = config.resource;
+const { resourcePath: staticPath, baseUrl } = config.resource;
 
 /**
  * 保存 PNG buffer 到文件，随后返回访问 URL
@@ -22,7 +23,7 @@ export function savePNG(content: Buffer): string {
   fs.mkdir(staticPath, { recursive: true })
     .then(() => fs.writeFile(filePath, content))
     .catch((error) => {
-      console.error("[util] PNG save failed: ", error);
+      log.error("[util] PNG save failed: ", error);
       throw new Error("Failed to save PNG file");
     });
   return `${baseUrl}/${fileName}`;
