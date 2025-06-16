@@ -10,7 +10,7 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 - 图表参数基于 [zod](https://zod.dev/) 校验，自动生成 JSON Schema
 - 支持暗色/亮色主题切换
 - 生成的图片自动保存并返回可访问的 URL，由内置静态资源服务器托管
-- 支持 MCP 协议（stdio、SSE，预留 HTTP），适用于 AI Agent
+- 支持 MCP 协议（stdio、SSE(弃用)、Streamable HTTP），适用于 AI Agent
 - 支持自定义地图 GeoJSON 动态注册
 
 ## 本地使用
@@ -29,7 +29,7 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 **若修改了 `res-port`，请确保 `res-base-url` 的端口号与之匹配。否则返回的图像链接将无法打开。**
 
-3. (可选) 由于版权问题，发布版本身将不带有任何 GeoJSON，若需要使用地图图表，请自行下载需要的 GeoJSON 并放置在 `geojson-path` 指定的目录下。JSON 文件的文件名将被注册为地图名称，_建议使用可读名称（例如中国地图可以使用 `china.json`，美国地图可以使用 `usa.json` 等）_。
+2. (可选) 由于版权问题，发布版本身将不带有任何 GeoJSON，若需要使用地图图表，请自行下载需要的 GeoJSON 并放置在 `geojson-path` 指定的目录下。JSON 文件的文件名将被注册为地图名称，_建议使用可读名称（例如中国地图可以使用 `china.json`，美国地图可以使用 `usa.json` 等）_。
 
 作为 HTTP 服务部署请参考 [应用配置](#应用配置)。
 
