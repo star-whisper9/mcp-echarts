@@ -9,27 +9,39 @@ import { config } from "../models/config.js";
 
 const { geoJsonPath } = config.resource;
 
-export const availableMaps: string[] = [];
-
 /**
- * 注册所有地图，设计上应只在服务器启动时执行一次
+ * 注册所有地图
  */
-export async function registerMaps(): Promise<boolean> {
+export async function registerMaps(): Promise<string[]> {
+  console.log("[util] Registering maps from GeoJSON files...");
   try {
+    let availableMaps: string[] = [];
     const files = await fs.readdir(geoJsonPath);
     for (const file of files) {
       if (file.endsWith(".json")) {
-        const geoName = path.basename(file, ".json");
-        const geoData = await loadGeoJson(geoName);
-        echarts.registerMap(geoName, geoData);
-        availableMaps.push(geoName);
-        console.log(`[util] Registered map: ${geoName}`);
+        try {
+          const geoName = path.basename(file, ".json");
+          const geoData = await loadGeoJson(geoName);
+          echarts.registerMap(geoName, geoData);
+          availableMaps.push(geoName);
+          console.log(`[util] Registered map: ${geoName}`);
+        } catch (error) {
+          console.error(
+            `[util] Failed to register map from ${file}.json: `,
+            error
+          );
+        }
       }
     }
-    return true;
+    if (availableMaps.length === 0) {
+      throw new Error(
+        "[util] No valid GeoJSON file found or all maps failed to register."
+      );
+    }
+    return availableMaps;
   } catch (error) {
     console.error("[util] Register maps failed: ", error);
-    return false;
+    return [];
   }
 }
 

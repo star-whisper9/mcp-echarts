@@ -1,4 +1,18 @@
 import fs from "fs";
+import minimist from "minimist";
+
+const argv = minimist(process.argv.slice(2), {
+  alias: {
+    "mcp-port": "mcpPort",
+    "mcp-host": "mcpHost",
+    "res-path": "resourcePath",
+    "res-enabled": "resourceEnabled",
+    "res-port": "resourcePort",
+    "res-host": "resourceHost",
+    "res-base-url": "resourceBaseUrl",
+    "geojson-path": "geoJsonPath",
+  },
+});
 
 const ALLOWED_TRANSPORTS = ["stdio", "sse", "http"] as const;
 type TransportType = (typeof ALLOWED_TRANSPORTS)[number];
@@ -9,7 +23,7 @@ type TransportType = (typeof ALLOWED_TRANSPORTS)[number];
  * @returns 合法的 MCP 传输方式
  */
 function getTransport(): TransportType {
-  const t = process.env.MCP_TRANSPORT || "stdio";
+  const t = argv.transport || process.env.MCP_TRANSPORT || "stdio";
   if (ALLOWED_TRANSPORTS.includes(t as TransportType)) {
     return t as TransportType;
   }
@@ -45,7 +59,7 @@ function getPort(input: string | undefined, defaultPort: number): number {
  * @returns CORS 策略列表
  */
 function getCorsPolicy(): string[] {
-  const cors = process.env.MCP_CORS;
+  const cors = argv.cors || process.env.MCP_CORS;
   if (cors) {
     try {
       const parsedCors = JSON.parse(cors);
@@ -83,16 +97,20 @@ function getCorsPolicy(): string[] {
 export const config = {
   server: {
     transport: getTransport(),
-    port: getPort(process.env.MCP_PORT, 1122),
-    host: process.env.MCP_HOST || "127.0.0.1",
+    port: getPort(argv.mcpPort || process.env.MCP_PORT, 1122),
+    host: argv.mcpHost || process.env.MCP_HOST || "127.0.0.1",
     cors: getCorsPolicy() || [],
   },
   resource: {
-    staticPath: process.env.RES_PATH || "./static",
-    enabled: process.env.RES_ENABLED === "true",
-    port: getPort(process.env.RES_PORT, 1123),
-    host: process.env.RES_HOST || "127.0.0.1",
-    baseUrl: process.env.RES_BASE_URL || "http://127.0.0.1:1123",
-    geoJsonPath: process.env.GEOJSON_PATH || "./static/geojson/",
+    staticPath: argv.resourcePath || process.env.RES_PATH || "./static",
+    enabled: argv.resourceEnabled || process.env.RES_ENABLED === "true",
+    port: getPort(argv.resourcePort || process.env.RES_PORT, 1123),
+    host: argv.resourceHost || process.env.RES_HOST || "127.0.0.1",
+    baseUrl:
+      argv.resourceBaseUrl ||
+      process.env.RES_BASE_URL ||
+      "http://127.0.0.1:1123",
+    geoJsonPath:
+      argv.geoJsonPath || process.env.GEOJSON_PATH || "./static/geojson/",
   },
 };
