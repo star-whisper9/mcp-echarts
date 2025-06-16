@@ -1,16 +1,6 @@
 #!/usr/bin/env node
 import "dotenv/config";
 
-// init echarts maps before importing servers
-// this is required for correct schema generation
-import { registerMaps } from "./utils/map.js";
-let mapRegStatus = await registerMaps();
-if (!mapRegStatus) {
-  console.warn(
-    "[main] Map registration failed, some features may not work properly."
-  );
-}
-
 import {
   runSSEServer,
   runStdioServer,

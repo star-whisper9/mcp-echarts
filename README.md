@@ -1,5 +1,10 @@
 # MCP-ECharts
 
+<center>
+   <img alt="NPM Version" src="https://img.shields.io/npm/v/%40starwhisper9%2Fmcp-echarts">
+   <img alt="NPM Last Update" src="https://img.shields.io/npm/last-update/%40starwhisper9%2Fmcp-echarts">
+</center>
+
 MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生成服务，支持通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 协议远程调用生成各类图表，并以图片形式输出（Server-Side Rendering）。
 
 ## 功能特性
@@ -11,24 +16,65 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 - 支持 MCP 协议（stdio、SSE，预留 HTTP），适用于 AI Agent
 - 支持自定义地图 GeoJSON 动态注册
 
-## 使用
+## 本地使用
 
 1. 按照 Stdio MCP 服务在你使用的客户端中进行配置，你需要关注以下配置：
    - 启动指令：`npx -y @starwhisper9/mcp-echarts`
-   - 环境变量配置：查阅下表
+   - 通过命令行参数传入应用配置，下表为推荐修改的配置，你也可以前往 [应用配置](#应用配置) 查看所有可用配置。
+   - _由于 MacOS 低端口号限制，在 MacOS 上使用时，你将有可能无法访问默认的 1123 资源端口，建议修改为高端口号。_
 
-| 建议修改 | 环境变量     | 描述                              | 默认值                  |
-| -------- | ------------ | --------------------------------- | ----------------------- |
-| ✅       | RES_PATH     | 生成的图片的本地存储位置          | `./static`              |
-| ❓       | RES_PORT     | 内置 HTTP 图像服务端口            | `1123`                  |
-| ❓       | RES_BASE_URL | 内置 HTTP 图像服务的基础 URL      | `http://127.0.0.1:1123` |
-| ✅       | GEOJSON_PATH | 地图坐标系使用的 GeoJSON 文件路径 | `./geojson`             |
+| 需要修改 | 命令行参数       | 描述                              | 默认值                  |
+| -------- | ---------------- | --------------------------------- | ----------------------- |
+| ✅       | `--res-path`     | 生成的图片的本地存储位置          | `./static`              |
+| ✅       | `--geojson-path` | 地图坐标系使用的 GeoJSON 文件路径 | `./geojson`             |
+| ❓       | `--res-port`     | 内置 HTTP 图像服务端口            | `1123`                  |
+| ❓       | `--res-base-url` | 内置 HTTP 图像服务的基础 URL      | `http://127.0.0.1:1123` |
 
-**若修改了 RES_PORT，请确保 RES_BASE_URL 的端口号与之匹配。否则返回的图像链接将无法打开。**
+**若修改了 `res-port`，请确保 `res-base-url` 的端口号与之匹配。否则返回的图像链接将无法打开。**
 
-3. (可选) 由于版权问题，发布版本身将不带有任何 GeoJSON，若需要使用地图图表，请自行下载需要的 GeoJSON 并放置在 `GEOJSON_PATH` 指定的目录下。JSON 文件的文件名将被注册为地图名称，_建议使用可读名称（例如中国地图可以使用 `china.json`，美国地图可以使用 `usa.json` 等）_。
+3. (可选) 由于版权问题，发布版本身将不带有任何 GeoJSON，若需要使用地图图表，请自行下载需要的 GeoJSON 并放置在 `geojson-path` 指定的目录下。JSON 文件的文件名将被注册为地图名称，_建议使用可读名称（例如中国地图可以使用 `china.json`，美国地图可以使用 `usa.json` 等）_。
 
-作为 HTTP 服务部署请查阅开发相关。
+作为 HTTP 服务部署请参考 [应用配置](#应用配置)。
+
+## 常见问题
+
+1. 服务启动失败
+
+   - 优先尝试使用 `npm i -g canvas` 安装 canvas。如果安装失败，请搜索你所使用的系统如何安装 `node-canvas`。**不要发送安装 canvas 问题的 Issue**。
+   - 其余问题请发送 Issue 或自行搜索 npx 日志中的错误。
+
+2. 启动后地图系图表无地图
+
+   - 由于版权问题，**发布包不带有任何 GeoJSON，你需要自行准备合法的 GeoJSON**。
+   - 确保你的 `geojson-path` 指定的目录下有合法的 GeoJSON 文件。
+   - 确保你的配置路径正确（_检查路径转义，路径是否正确_）。
+
+3. 在部分客户端（**尤其是 VSCode**）中提示有非法工具（Schema 不合法）
+
+   - 这是由于地图系图表的地图注册是动态的，当地图全部注册失败（例如没有合法的 GeoJSON 文件，或地图参数配置错误）时，服务器将会返回一个空的枚举参数。
+   - 如果你不使用地图系图表，可以忽略这个错误；否则请确保你的 `geojson-path` 指定的目录下有合法的 GeoJSON 文件。
+
+## 应用配置
+
+应用配置具有两种传入方式：
+
+- 命令行参数
+- **(已弃用)** 环境变量
+
+在当前版本(1.1.0)，出于兼容性考虑仍保留了环境变量参数，但建议使用命令行参数，未来版本可能会移除环境变量配置。
+
+| 命令行           | 环境变量        | 描述                                                          | 默认值                  | 必需 | 可选值                                                                                                                     |
+| ---------------- | --------------- | ------------------------------------------------------------- | ----------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
+| `--transport`    | `MCP_TRANSPORT` | 传输方式                                                      | `stdio`                 | 否   | `stdio`, `sse`, `http`                                                                                                     |
+| `--mcp-port`     | `MCP_PORT`      | MCP 服务端口                                                  | `1122`                  | 否   | 1-65535                                                                                                                    |
+| `--mcp-host`     | `MCP_HOST`      | MCP 服务监听主机                                              | `127.0.0.1`             | 否   | IPv4 地址或域名                                                                                                            |
+| `--cors`         | `MCP_CORS`      | CORS 策略，当传入策略包含 "\*" 时将无视其余规则，允许全部跨域 | `[]`                    | 否   | 包含允许的地址的 JSON 数组字符串 / 每行一个允许地址的 CORS 文本文件路径                                                    |
+| `--res-path`     | `RES_PATH`      | 生成的图片存储路径，建议使用绝对路径                          | `./static`              | 否   | 有写权限的合法的文件系统路径                                                                                               |
+| `--res-enabled`  | `RES_ENABLED`   | 是否启用内置 HTTP 静态资源服务                                | `true`                  | 否   | `true`, `false`                                                                                                            |
+| `--res-port`     | `RES_PORT`      | 内置 HTTP 静态资源服务端口                                    | `1123`                  | 否   | 1-65535                                                                                                                    |
+| `--res-host`     | `RES_HOST`      | 内置 HTTP 静态资源服务监听主机                                | `127.0.0.1`             | 否   | IPv4 地址或域名                                                                                                            |
+| `--res-base-url` | `RES_BASE_URL`  | 内置 HTTP 静态资源服务的基础 URL                              | `http://127.0.0.1:1123` | 否   | 有效的 URL，指向部署的静态服务的地址（MCP 生成内容将返回此地址）                                                           |
+| `--geojson-path` | `GEOJSON_PATH`  | 地图坐标系使用的 GeoJSON 文件路径                             | `./geojson`             | 否   | 有读权限的合法的文件系统路径，内含有效的 GeoJSON 文件。**文件推荐命名为可读的地区名称** ，模型将会获得文件名作为可选地图。 |
 
 ---
 
@@ -38,9 +84,10 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 
 - [x] npm 包发布
 - [ ] 更多图表类型支持
-- [ ] 身份验证
+- [ ] 可选身份验证
 - [ ] 图表结构优化和默认外观样式优化
 - [ ] _SVG 地图支持_
+- [ ] 更多输出格式支持（优先 SVG 和 HTML）
 
 欢迎提交 PR 或 Issue！
 
@@ -65,17 +112,17 @@ MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生�
 npm install
 ```
 
-_项目使用到了 node-canvas 作为服务端渲染库，这个库是平台相关的。_
-
 ## 构建项目
 
 ```bash
 npm run build
 ```
 
-## 所有配置
+## 运行服务
 
-参与 [.env.example](./.env.example) 文件的注释。
+```bash
+npm run start
+```
 
 ## 安全建议
 

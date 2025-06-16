@@ -7,7 +7,7 @@ import { savePNG } from "../utils/fileOutput.js";
 import type { ToolInput } from "../models/schema.js";
 import merge from "lodash/merge.js";
 import { DefaultGeoOptions } from "../models/schema.js";
-import { availableMaps } from "../utils/map.js";
+import { registerMaps } from "../utils/map.js";
 
 /**
  * 定义散点图在地理坐标系上的输入参数
@@ -36,7 +36,7 @@ const schema = z.object({
       .optional()
       .describe("图例配置，可选"),
     geo: z.object({
-      map: z.enum(availableMaps as [string, ...string[]]),
+      map: z.enum((await registerMaps()) as [string, ...string[]]),
     }),
     series: z.array(
       z.object({
