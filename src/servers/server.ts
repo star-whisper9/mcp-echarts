@@ -38,6 +38,8 @@ export async function runHTTPServer(endpoint: string = "/mcp"): Promise<void> {
   await run(createServer, endpoint);
 }
 
+export const activeServers = new Set<Server>();
+
 const createServer = (): Server => {
   const server = new Server(
     {
@@ -55,13 +57,14 @@ const createServer = (): Server => {
   server.onerror = (error) => {
     log.error("[MCP Server] error: ", error);
   };
-  process.on("SIGINT", () => {
-    log.info("[MCP Server] Received SIGINT, shutting down now...");
-    server.close();
-    process.exit(0);
-  });
 
   registerTools(server);
+
+  // 维护Server Set
+  activeServers.add(server);
+  server.onclose = () => {
+    activeServers.delete(server);
+  };
 
   return server;
 };

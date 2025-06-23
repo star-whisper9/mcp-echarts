@@ -15,6 +15,7 @@ export const ChartTypes = {
   pie: "pie",
   scatterOnGrid: "scatterOnGrid",
   scatterOnGeo: "scatterOnGeo",
+  area: "area",
 } as const;
 
 /**

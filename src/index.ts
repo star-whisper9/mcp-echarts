@@ -5,6 +5,7 @@ import {
   runSSEServer,
   runStdioServer,
   runHTTPServer,
+  activeServers,
 } from "./servers/server.js";
 import { initLogger, log } from "./utils/log.js";
 
@@ -38,6 +39,16 @@ async function main() {
     const { runResourceServer } = await import("./servers/resourceServer.js");
     await runResourceServer();
   }
+
+  // 统一处理维护的服务器实例，避免每次服务器都注册监听器
+  process.on("SIGINT", () => {
+    log.info("[main] Received SIGINT, shutting down servers...");
+    for (const server of activeServers) {
+      server.close().catch((error) => {
+        log.error("[main] Error closing  connection:", error);
+      });
+    }
+  });
 }
 
 main().catch((error) => {

@@ -19,46 +19,56 @@ const schema = z.object({
     .object({
       title: z
         .object({
-          text: z.string().optional().describe("图表标题"),
-          subtext: z.string().optional().describe("图表副标题"),
-        })
-        .optional(),
-      legend: z
-        .object({
-          data: z
-            .array(
-              z.object({
-                name: z.string().describe("图例名称"),
-              })
-            )
-            .optional(),
+          text: z.string().default("柱状图").describe("主标题"),
+          subtext: z.string().optional().describe("副标题"),
         })
         .optional()
-        .describe("图例配置，可选"),
-      xAxis: z.object({
-        type: z
-          .enum(["category", "value", "time"])
-          .default("category")
-          .describe("X轴类型"),
-        name: z.string().optional().describe("X轴名称"),
-        axisLabel: z.object({
-          rotate: z.number().default(0).optional().describe("X轴标签旋转角度"),
-        }),
-        data: z
-          .array(z.string())
-          .optional()
-          .describe("X轴分类数据，若 type 为 'category' 时必填"),
-      }),
-      yAxis: z.object({
-        type: z
-          .enum(["value", "category", "time"])
-          .default("value")
-          .describe("Y轴类型"),
-        name: z.string().optional().describe("Y轴名称"),
-      }),
+        .describe("可选：标题配置"),
+      legend: z
+        .object({
+          data: z.array(
+            z.object({
+              name: z.string().describe("图例名称"),
+            })
+          ),
+        })
+        .optional()
+        .describe("可选：单独配置图例"),
+      xAxis: z
+        .object({
+          type: z
+            .enum(["category", "value", "time"])
+            .default("category")
+            .describe("轴类型"),
+          name: z.string().optional().describe("可选：名称"),
+          axisLabel: z
+            .object({
+              rotate: z.number().default(0).describe("标签旋转角度"),
+            })
+            .optional()
+            .describe("可选：标签样式"),
+          data: z
+            .array(z.string().describe("分类数据"))
+            .optional()
+            .describe("轴分类数据，若 `type` 为 'category' 时必填"),
+        })
+        .describe("X轴配置"),
+      yAxis: z
+        .object({
+          type: z
+            .enum(["value", "category", "time"])
+            .default("value")
+            .describe("轴类型"),
+          name: z.string().optional().describe("可选：名称"),
+        })
+        .describe("Y轴配置"),
       series: z.array(
         z.object({
           type: z.literal("bar"),
+          name: z
+            .string()
+            .optional()
+            .describe("当需要使用自定义 legend 时，建议填写系列名称"),
           stack: z
             .string()
             .optional()
@@ -66,23 +76,24 @@ const schema = z.object({
           barWidth: z
             .union([z.string(), z.number()])
             .optional()
-            .describe("柱状图宽度，可以是百分比或具体像素值"),
+            .describe("可选：柱状图宽度，可以是百分比或具体像素值"),
           barGap: z
             .union([z.string(), z.number()])
             .optional()
-            .describe("柱状图间距，可以是百分比或具体像素值"),
+            .describe("可选：柱状图间距，可以是百分比或具体像素值"),
           data: z
             .array(
               z.union([
-                z.number().describe("数据值"),
+                z.number(),
                 z
                   .object({
-                    value: z.number().describe("数据值"),
-                    name: z.string().optional().describe("数据名称"),
+                    value: z.number(),
+                    name: z.string().optional(),
                     itemStyle: z
                       .object({
-                        color: z.string().optional().describe("数据项颜色"),
+                        color: z.string().describe("单个数据项颜色"),
                       })
+                      .describe("可选：单个数据项样式")
                       .optional(),
                   })
                   .describe("对象形式数据项"),

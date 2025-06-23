@@ -16,25 +16,28 @@ const schema = z.object({
     .object({
       title: z
         .object({
-          text: z.string().optional().describe("图表标题"),
-          subtext: z.string().optional().describe("图表副标题"),
-        })
-        .optional(),
-      legend: z
-        .object({
-          data: z
-            .array(
-              z.object({
-                name: z.string().describe("图例名称"),
-              })
-            )
-            .optional(),
+          text: z.string().default("饼图").describe("主标题"),
+          subtext: z.string().optional().describe("副标题"),
         })
         .optional()
-        .describe("图例配置，可选"),
+        .describe("可选：标题配置"),
+      legend: z
+        .object({
+          data: z.array(
+            z.object({
+              name: z.string().describe("图例名称"),
+            })
+          ),
+        })
+        .optional()
+        .describe("可选：单独配置图例"),
       series: z.array(
         z.object({
           type: z.literal("pie"),
+          name: z
+            .string()
+            .optional()
+            .describe("当需要使用自定义 legend 时，建议填写系列名称"),
           radius: z
             .union([
               z.string(),
@@ -43,13 +46,13 @@ const schema = z.object({
             ])
             .optional()
             .describe(
-              "饼图半径，可以是单个值或数组，当是数组时，首个值为内半径，第二个值为外半径"
+              "可选：饼图半径，可以是单个值或数组，当是数组时，首个值为内半径，第二个值为外半径"
             ),
           roseType: z
             .enum(["radius", "area"])
             .optional()
             .describe(
-              "玫瑰图类型，设置此项时绘制为南丁格尔玫瑰图。可选'radius' 或 'area'"
+              "可选：玫瑰图类型，设置此项时绘制为南丁格尔玫瑰图。可选'radius' 或 'area'"
             ),
           itemStyle: z
             .object({
@@ -58,18 +61,19 @@ const schema = z.object({
                 .optional()
                 .describe("数据项圆角半径，适用于南丁格尔玫瑰图"),
             })
+            .describe("可选：数据项样式")
             .optional(),
           data: z
             .array(
               z.union([
-                z.number().describe("数据值"),
+                z.number(),
                 z
                   .object({
-                    value: z.number().describe("数据值"),
-                    name: z.string().optional().describe("数据名称"),
+                    value: z.number(),
+                    name: z.string().optional(),
                     itemStyle: z
                       .object({
-                        color: z.string().optional().describe("数据项颜色"),
+                        color: z.string().describe("单个数据项颜色"),
                       })
                       .optional(),
                   })
