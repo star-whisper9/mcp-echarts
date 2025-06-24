@@ -7,6 +7,7 @@ import { savePNG } from "../utils/fileOutput.js";
 import type { ToolInput } from "../models/schema.js";
 import { DefaultGridOptions } from "../models/schema.js";
 import merge from "lodash/merge.js";
+import { symbolSizeFunc, itemStyleFunc } from "../utils/isolatedVM.js";
 
 /**
  * 定义散点图的输入参数
@@ -73,15 +74,12 @@ const schema = z.object({
             .union([
               z.number(),
               z
-                .array(z.number())
-                .describe("散点大小数组，首项为宽度，第二项为高度"),
-              z
                 .string()
                 .describe(
-                  "回调函数：`(value: Array|number, params: Object) => number|Array`，其中第一个参数是 `data` 中的数据值，第二个参数是其他的数据项参数。用于动态计算散点大小"
+                  "动态计算散点大小：必须是包含 function 关键字的 JavaScript 函数。例如 `function(value) {return value[1];}` ，传入的是数据值数组，返回大小数值"
                 ),
             ])
-            .describe("散点大小"),
+            .describe("散点大小，建议至少大于 5，否则可能难以辨认"),
           itemStyle: z
             .object({
               color: z.union([
@@ -89,7 +87,7 @@ const schema = z.object({
                 z
                   .string()
                   .describe(
-                    "回调函数：`(params: Object) => string`，用于动态计算散点颜色，传入的是数据项参数"
+                    "动态计算散点颜色：必须是包含 function 关键字的 JavaScript 函数。例如 `function(value) {return value['data'][1] > 100 ? 'red' : 'blue';}` ，传入的是完整的 series 项，返回颜色字符串"
                   ),
               ]),
             })
@@ -142,6 +140,8 @@ async function create(input: Record<string, any>): Promise<string> {
   });
 
   const mergedOptions = merge({}, options, defaultOptions);
+  symbolSizeFunc(mergedOptions);
+  itemStyleFunc(mergedOptions);
 
   chart.setOption(mergedOptions);
 
