@@ -37,6 +37,7 @@ const schema = z.object({
       .describe("可选：单独配置图例"),
     geo: z
       .object({
+        // FIXME 模块顶层使用 await 可能有问题
         map: z.enum((await registerMaps()) as [string, ...string[]]),
       })
       .describe("选用的地图底图"),
@@ -146,7 +147,7 @@ async function create(input: Record<string, any>): Promise<string> {
   chart.setOption(mergedOptions);
 
   const buffer = canvas.toBuffer("image/png");
-  return savePNG(buffer);
+  return await savePNG(buffer);
 }
 
 export const scatterOnGeo = {

@@ -138,7 +138,7 @@ async function create(input: Record<string, any>): Promise<string> {
   chart.setOption(mergedOptions);
 
   const buffer = canvas.toBuffer("image/png");
-  return savePNG(buffer);
+  return await savePNG(buffer);
 }
 
 export const barOnGrid = {

@@ -94,14 +94,19 @@ class IsolatedContextManager {
     const dangerousPatterns = [
       /require\s*\(/,
       /import\s+/,
+      /process\b/,
+      /global\b/,
+      /constructor/i,
+      /Function/i,
       /eval\s*\(/,
-      /Function\s*\(/,
-      /constructor/,
-      /prototype/,
-      /process\./,
-      /global\./,
-      /__proto__/,
+      /arguments/i,
+      /callee/i,
+      /\[\s*['"`]/, // 防止属性访问
+      /String\.fromCharCode/i,
+      /unescape/i,
+      /\\u[0-9a-f]{4}/i, // Unicode转义
       /this\./,
+      /window\./,
     ];
 
     if (dangerousPatterns.some((pattern) => pattern.test(fnStr))) {
@@ -138,7 +143,7 @@ class IsolatedContextManager {
 
           // 将参数传入隔离环境
           const copiedArgs = args.map((arg) =>
-            new ivm.ExternalCopy(arg).copyInto()
+            new ivm.ExternalCopy(arg).copy()
           );
 
           const result = isolatedFunc.applySync(undefined, copiedArgs, {
