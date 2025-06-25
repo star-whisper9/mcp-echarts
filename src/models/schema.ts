@@ -15,6 +15,9 @@ export const ChartTypes = {
   pie: "pie",
   scatterOnGrid: "scatterOnGrid",
   scatterOnGeo: "scatterOnGeo",
+  area: "area",
+  scatterOnSingleAxis: "scatterOnSingleAxis",
+  scatterOnCalendar: "scatterOnCalendar",
 } as const;
 
 /**
@@ -23,11 +26,12 @@ export const ChartTypes = {
 export const DefaultChartOptions = {
   title: {
     left: "center",
-    top: "top",
+    top: 20,
   },
   legend: {
     icon: "roundRect",
     top: "bottom",
+    bottom: 20,
   },
 };
 
@@ -94,4 +98,37 @@ export const DefaultGeoOptions = {
   },
 };
 
-// TODO 平行坐标系，单轴坐标系，日历坐标系
+/**
+ * 单轴坐标系默认选项
+ */
+export const DefaultSingleAxisOptions = {
+  ...DefaultChartOptions,
+  singleAxis: {
+    bottom: "15%",
+    show: true,
+  },
+};
+
+/**
+ * 日历坐标系默认选项
+ */
+export const DefaultCalendarOptions = {
+  ...DefaultChartOptions,
+  calendar: {
+    top: 140,
+    left: 45,
+    dayLabel: {
+      firstDay: 1,
+      margin: 12,
+    },
+    monthLabel: {
+      margin: 12,
+    },
+    yearLabel: {
+      margin: 38,
+      position: "top",
+    },
+  },
+};
+
+// TODO 平行坐标系

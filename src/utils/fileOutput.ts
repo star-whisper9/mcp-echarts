@@ -15,16 +15,17 @@ const { resourcePath: staticPath, baseUrl } = config.resource;
  * @param content PNG图片内容
  * @returns 保存后的图片URL(Base URL 来自服务器设定，硬编码)
  */
-export function savePNG(content: Buffer): string {
+export async function savePNG(content: Buffer): Promise<string> {
   const fileName = `${Date.now()}-${Math.random()
     .toString(36)
     .slice(2, 10)}.png`;
   const filePath = path.join(staticPath, fileName);
-  fs.mkdir(staticPath, { recursive: true })
-    .then(() => fs.writeFile(filePath, content))
-    .catch((error) => {
-      log.error("[util] PNG save failed: ", error);
-      throw new Error("Failed to save PNG file");
-    });
-  return `${baseUrl}/${fileName}`;
+  try {
+    await fs.mkdir(staticPath, { recursive: true });
+    await fs.writeFile(filePath, content);
+    return `${baseUrl}/${fileName}`;
+  } catch (error) {
+    log.error("[util] PNG save failed: ", error);
+    throw new Error("Failed to save PNG file");
+  }
 }

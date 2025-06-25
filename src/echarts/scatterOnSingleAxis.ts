@@ -1,3 +1,4 @@
+// Not Stable
 import * as echarts from "echarts";
 import { z } from "zod";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -5,22 +6,21 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { createCanvas } from "canvas";
 import { savePNG } from "../utils/fileOutput.js";
 import type { ToolInput } from "../models/schema.js";
+import { DefaultSingleAxisOptions } from "../models/schema.js";
 import merge from "lodash/merge.js";
-import { DefaultGeoOptions } from "../models/schema.js";
-import { registerMaps } from "../utils/map.js";
 import { symbolSizeFunc, itemStyleFunc } from "../utils/isolatedVM.js";
 
 /**
- * 定义散点图在地理坐标系上的输入参数
+ * 定义散点图的输入参数
  */
 const schema = z.object({
   width: z.number().default(800).describe("图表宽度"),
-  height: z.number().default(600).describe("图表高度"),
+  height: z.number().default(150).describe("图表高度"),
   dark: z.boolean().default(false).describe("是否使用暗色主题"),
   options: z.object({
     title: z
       .object({
-        text: z.string().default("地图散点图").describe("主标题"),
+        text: z.string().default("单轴散点图").describe("主标题"),
         subtext: z.string().optional().describe("副标题"),
       })
       .optional()
@@ -35,23 +35,39 @@ const schema = z.object({
       })
       .optional()
       .describe("可选：单独配置图例"),
-    geo: z
-      .object({
-        // FIXME 模块顶层使用 await 可能有问题
-        map: z.enum((await registerMaps()) as [string, ...string[]]),
-      })
-      .describe("选用的地图底图"),
+    singleAxis: z.object({
+      orient: z
+        .enum(["horizontal", "vertical"])
+        .default("horizontal")
+        .describe("单轴方向"),
+      type: z
+        .enum(["category", "value", "time"])
+        .default("category")
+        .describe("轴类型"),
+      name: z.string().optional().describe("可选：名称"),
+      inverse: z.boolean().default(false).describe("是否反向"),
+      data: z
+        .array(z.string().describe("分类数据"))
+        .optional()
+        .describe("轴分类数据，若 `type` 为 'category' 时必填"),
+      axisLabel: z
+        .object({
+          rotate: z.number().default(0).describe("标签旋转角度"),
+        })
+        .optional()
+        .describe("可选：标签样式"),
+    }),
     series: z.array(
       z.object({
+        coordinateSystem: z.literal("singleAxis"),
         type: z.literal("scatter"),
         name: z
           .string()
           .optional()
           .describe("当需要使用自定义 legend 时，建议填写系列名称"),
-        coordinateSystem: z.literal("geo"),
         symbolSize: z
           .union([
-            z.number().describe("散点大小"),
+            z.number(),
             z
               .string()
               .describe(
@@ -71,38 +87,15 @@ const schema = z.object({
             ]),
           })
           .optional()
-          .describe("散点样式配置"),
-        label: z
-          .object({
-            show: z.boolean().default(true).describe("是否显示标签"),
-            position: z
-              .enum(["inside", "top", "bottom", "left", "right"])
-              .optional()
-              .describe("标签位置")
-              .default("top"),
-            formatter: z.string().describe("标签格式化字符串函数，"),
-          })
-          .optional()
-          .describe("散点标签配置"),
+          .describe("可选：散点样式配置"),
         data: z
           .array(
             z.union([
-              z.array(z.number()).describe("数据值数组"),
+              z.array(z.number()),
               z
                 .object({
                   value: z.array(z.number()),
                   name: z.string().optional(),
-                  label: z
-                    .object({
-                      show: z.boolean().default(true).describe("是否显示标签"),
-                      position: z
-                        .enum(["inside", "top", "bottom", "left", "right"])
-                        .describe("标签位置")
-                        .default("top"),
-                      formatter: z.string().describe("标签格式化字符串"),
-                    })
-                    .optional()
-                    .describe("可选：单个点的标签配置"),
                 })
                 .describe("对象形式的数据项"),
             ])
@@ -117,8 +110,8 @@ const schema = z.object({
  * Tool 导出
  */
 const tool: Tool = {
-  name: "scatterOnGeo",
-  description: "创建地图散点图",
+  name: "scatterOnSingleAxis",
+  description: "创建单轴散点图",
   inputSchema: zodToJsonSchema(schema) as ToolInput,
 };
 
@@ -136,7 +129,7 @@ async function create(input: Record<string, any>): Promise<string> {
     dark ? "dark" : null
   );
 
-  const defaultOptions = merge({}, DefaultGeoOptions, {
+  const defaultOptions = merge({}, DefaultSingleAxisOptions, {
     backgroundColor: dark ? "#333" : "#fff",
   });
 
@@ -150,7 +143,7 @@ async function create(input: Record<string, any>): Promise<string> {
   return await savePNG(buffer);
 }
 
-export const scatterOnGeo = {
+export const scatterOnSingleAxis = {
   tool,
   schema,
   create,

@@ -22,7 +22,8 @@ const schema = z.object({
           text: z.string().default("折线图").describe("图表标题"),
           subtext: z.string().optional().describe("图表副标题"),
         })
-        .optional(),
+        .optional()
+        .describe("可选的标题配置"),
       legend: z
         .object({
           data: z
@@ -34,16 +35,19 @@ const schema = z.object({
             .optional(),
         })
         .optional()
-        .describe("图例配置，可选"),
+        .describe("可选的图例配置"),
       xAxis: z.object({
         type: z
           .enum(["category", "value", "time"])
           .default("category")
           .describe("X轴类型"),
         name: z.string().optional().describe("X轴名称"),
-        axisLabel: z.object({
-          rotate: z.number().default(0).optional().describe("X轴标签旋转角度"),
-        }),
+        axisLabel: z
+          .object({
+            rotate: z.number().default(0).describe("标签旋转角度"),
+          })
+          .optional()
+          .describe("可选：标签样式"),
         data: z
           .array(z.string().describe("X轴分类数据"))
           .optional()
@@ -56,34 +60,49 @@ const schema = z.object({
           .describe("Y轴类型"),
         name: z.string().optional().describe("Y轴名称"),
       }),
+      visualMap: z
+        .object({
+          type: z.literal("piecewise"),
+          show: z.literal(false),
+          dimension: z.number().default(0).describe("视觉映射维度"),
+          seriesIndex: z.number().default(0).describe("数据系列索引"),
+          pieces: z.array(
+            z.object({
+              gt: z.number().optional().describe("大于某值"),
+              lt: z.number().optional().describe("小于某值"),
+              color: z
+                .string()
+                .default("rgba(0,0,180,0.4)")
+                .describe("填充颜色，使用 rgba(r, g, b, a) 格式"),
+            })
+          ),
+        })
+        .optional()
+        .describe("可选的折线图区域填充配置"),
       series: z.array(
         z.object({
           type: z.literal("line"),
+          name: z
+            .string()
+            .optional()
+            .describe("当需要使用自定义 legend 时，建议填写系列名称"),
           stack: z
             .string()
             .optional()
             .describe("系列堆叠名称，若需要堆叠时必填"),
-          smooth: z.boolean().default(false).describe("是否平滑曲线"),
+          smooth: z
+            .union([
+              z.number().default(0.6).describe("平滑度，0-1 之间的值"),
+              z.boolean().default(false).describe("是否使用自动平滑"),
+            ])
+            .optional()
+            .describe("可选的平滑曲线配置"),
           lineStyle: z
             .object({
-              color: z
-                .string()
-                .optional()
-                .describe("可选设定的单条线条颜色（覆盖默认颜色）"),
+              color: z.string().describe("单条线条颜色（覆盖默认颜色）"),
             })
-            .describe("线条样式"),
-          areaStyle: z
-            .object({
-              color: z
-                .string()
-                .optional()
-                .describe("可选设定的区域填充颜色（默认为透明）"),
-              opacity: z
-                .number()
-                .default(0.7)
-                .describe("区域填充透明度，0-1之间"),
-            })
-            .describe("区域填充样式"),
+            .optional()
+            .describe("可选的线条样式配置"),
           data: z
             .array(
               z.union([
@@ -146,7 +165,7 @@ async function create(input: Record<string, any>): Promise<string> {
   chart.setOption(mergedOptions);
 
   const buffer = canvas.toBuffer("image/png");
-  return savePNG(buffer);
+  return await savePNG(buffer);
 }
 
 export const lineOnGrid = {
