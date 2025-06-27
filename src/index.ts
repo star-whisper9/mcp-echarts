@@ -8,7 +8,7 @@ import {
   activeServers,
 } from "./servers/server.js";
 import { initLogger, log } from "./utils/log.js";
-import { cleanupContexts } from "./utils/isolatedVM.js";
+import { vmManager } from "./utils/vmUtil.js";
 
 initLogger();
 
@@ -46,7 +46,7 @@ async function main() {
 
     // 清理 isolated-vm 上下文
     try {
-      cleanupContexts();
+      vmManager.cleanup();
       log.info("[main] Cleaned up isolated VM contexts");
     } catch (error) {
       log.error("[main] Error cleaning up contexts:", error);
@@ -95,8 +95,8 @@ main().catch(async (error) => {
     error
   );
   try {
-    const { cleanupContexts } = await import("./utils/isolatedVM.js");
-    cleanupContexts();
+    const { vmManager } = await import("./utils/vmUtil.js");
+    vmManager.cleanup();
   } catch (cleanupError) {
     log.error("[main] Error during cleanup:", cleanupError);
   }

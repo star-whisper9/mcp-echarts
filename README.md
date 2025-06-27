@@ -1,6 +1,6 @@
 # MCP-ECharts
 
-<img alt="NPM Version" src="https://img.shields.io/npm/v/%40starwhisper9%2Fmcp-echarts"><img alt="NPM Last Update" src="https://img.shields.io/npm/last-update/%40starwhisper9%2Fmcp-echarts">
+<a href="https://www.npmjs.com/package/@starwhisper9/mcp-echarts" target="_blank"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40starwhisper9%2Fmcp-echarts"><img alt="NPM Last Update" src="https://img.shields.io/npm/last-update/%40starwhisper9%2Fmcp-echarts"></a>
 
 MCP-ECharts 是一个基于 [ECharts](https://echarts.apache.org/) 的图表生成服务，支持通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 协议远程调用生成各类图表，并以图片形式输出（Server-Side Rendering）。
 

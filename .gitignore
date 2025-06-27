@@ -41,6 +41,7 @@ jest-coverage/
 *.sublime-workspace
 *.sublime-project
 static/
+tests/
 
 # copilot settings
 .github
