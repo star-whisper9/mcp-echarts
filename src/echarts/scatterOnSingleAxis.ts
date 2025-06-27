@@ -8,7 +8,7 @@ import { savePNG } from "../utils/fileOutput.js";
 import type { ToolInput } from "../models/schema.js";
 import { DefaultSingleAxisOptions } from "../models/schema.js";
 import merge from "lodash/merge.js";
-import { symbolSizeFunc, itemStyleFunc } from "../utils/isolatedVM.js";
+import { processCallback, releaseCallbacks } from "../utils/callbackUtil.js";
 
 /**
  * 定义散点图的输入参数
@@ -134,12 +134,31 @@ async function create(input: Record<string, any>): Promise<string> {
   });
 
   const mergedOptions = merge({}, options, defaultOptions);
-  symbolSizeFunc(mergedOptions);
-  itemStyleFunc(mergedOptions);
+
+  // 回调路径处理
+  const paths = (mergedOptions: any) => {
+    const paths: string[] = [];
+    if (mergedOptions.series) {
+      mergedOptions.series.forEach((series: any, index: number) => {
+        if (series.itemStyle?.color?.includes?.("function")) {
+          paths.push(`series.${index}.itemStyle.color`);
+        }
+        if (
+          typeof series.symbolSize === "string" &&
+          series.symbolSize.includes("function")
+        ) {
+          paths.push(`series.${index}.symbolSize`);
+        }
+      });
+    }
+    return paths;
+  };
+  const ids = await processCallback(paths(mergedOptions), mergedOptions);
 
   chart.setOption(mergedOptions);
-
   const buffer = canvas.toBuffer("image/png");
+
+  releaseCallbacks(ids);
   return await savePNG(buffer);
 }
 
