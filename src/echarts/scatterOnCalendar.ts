@@ -114,11 +114,11 @@ async function create(input: Record<string, any>): Promise<string> {
   );
 
   if (options.calendar.orient === "horizontal") {
-    width = 5 * options.calendar.cellSize * months + 80; // 80 - 画面左右留白
+    width = 4.6 * options.calendar.cellSize * months + 80; // 80 - 画面左右留白
     height = 7 * options.calendar.cellSize + 190; // 190 - 画面底留白、标题预留
   } else {
     width = 7 * options.calendar.cellSize + 80; // 80 - 画面左右留白
-    height = 5 * options.calendar.cellSize * months + 190; // 190 - 画面底留白、标题预留
+    height = 4.6 * options.calendar.cellSize * months + 190; // 190 - 画面底留白、标题预留
   }
 
   const canvas = createCanvas(width, height);

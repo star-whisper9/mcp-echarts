@@ -116,7 +116,7 @@ export const DefaultCalendarOptions = {
   ...DefaultChartOptions,
   calendar: {
     top: 140,
-    left: 45,
+    left: "center",
     dayLabel: {
       firstDay: 1,
       margin: 12,
