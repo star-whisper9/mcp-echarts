@@ -1,3 +1,8 @@
+
+src/.vuepress/.cache/
+src/.vuepress/.temp/
+src/.vuepress/dist/
+
 # Node
 node_modules/
 npm-debug.log*
