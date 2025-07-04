@@ -1,0 +1,44 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# TypeScript
+dist/
+build/
+lib/
+*.tsbuildinfo
+
+# VSCode
+.vscode/
+.history/
+
+# Env files
+.env*
+!.env.example
+config.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Coverage
+coverage/
+
+# Jest
+jest-coverage/
+
+# Others
+*.local
+.idea/
+*.sublime-workspace
+*.sublime-project
+static/
+tests/
