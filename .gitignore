@@ -18,6 +18,7 @@ lib/
 
 # VSCode
 .vscode/
+!.vscode/launch.json
 .history/
 
 # Env files
