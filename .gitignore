@@ -47,3 +47,4 @@ jest-coverage/
 *.sublime-project
 static/
 tests/
+.github/copilot-instructions.md

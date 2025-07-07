@@ -12,6 +12,7 @@ export default hopeTheme({
   },
 
   logo: "/favicon.ico",
+  favicon: "/favicon.ico",
 
   repo: "https://github.com/star-whisper9/mcp-echarts",
 
@@ -125,6 +126,7 @@ export default hopeTheme({
     //   plugins: ["highlight", "math", "search", "notes", "zoom"],
     // },
   },
+  hotReload: true,
 
   plugins: {
     // Note: This is for testing ONLY!
@@ -138,7 +140,7 @@ export default hopeTheme({
     // },
 
     components: {
-      components: ["Badge", "VPCard"],
+      components: ["Badge", "VPCard", "VPBanner"],
     },
 
     icon: {},

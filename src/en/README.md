@@ -1,7 +1,7 @@
 ---
 home: true
 icon: chart-simple
-title: MCP-ECharts Documentation
+title: Home
 heroImage: https://echarts.apache.org/zh/images/favicon.png
 bgImage: https://theme-hope-assets.vuejs.press/bg/6-light.svg
 bgImageDark: https://theme-hope-assets.vuejs.press/bg/6-dark.svg
@@ -11,12 +11,12 @@ heroText: MCP-ECharts
 tagline: MCP server for chart generation based on ECharts
 actions:
   - text: Quick Start
-    icon: play
+    icon: solar:play-bold-duotone
     link: ./guide/
     type: primary
 
   - text: Documentation
-    icon: book
+    icon: material-symbols:book-rounded
     link: ./docs/
 
 highlights:
@@ -58,11 +58,11 @@ highlights:
         details: Supports calendar scatter charts to visualize time series data
 
       - title: Map Customization
-        icon: material-symbols:map
+        icon: material-symbols:map-outline
         details: Supports custom maps with dynamic GeoJSON registration
 
       - title: Theme Support
-        icon: material-symbols:palette
+        icon: material-symbols:palette-outline
         details: Supports dark/light theme switching
 
   - header: Key Features
@@ -80,9 +80,9 @@ highlights:
         details: Built-in basic static hosting service, ready to use
 
       - title: SSR
-        icon: server
+        icon: mdi:server-outline
         details: Server-Side Rendering for high-performance chart generation
 
 copyright: false
-footer: Based on <a href="https://echarts.apache.org/" target="_blank">Apache ECharts</a> | Apache-2.0 Licensed
+footer: Based on <a href="https://theme-hope.vuejs.press/" target="_blank">Vuepress Theme Hope</a> | Apache-2.0 Licensed
 ---

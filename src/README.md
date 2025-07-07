@@ -1,7 +1,7 @@
 ---
 home: true
 icon: chart-simple
-title: MCP-ECharts 主页
+title: 主页
 heroImage: https://echarts.apache.org/zh/images/favicon.png
 bgImage: https://theme-hope-assets.vuejs.press/bg/6-light.svg
 bgImageDark: https://theme-hope-assets.vuejs.press/bg/6-dark.svg
@@ -11,12 +11,12 @@ heroText: MCP-ECharts
 tagline: 基于 ECharts 的图表生成 MCP 服务
 actions:
   - text: 快速开始
-    icon: play
+    icon: solar:play-bold-duotone
     link: ./guide/
     type: primary
 
   - text: 文档
-    icon: book
+    icon: material-symbols:book-rounded
     link: ./docs/
 
 highlights:
@@ -58,11 +58,11 @@ highlights:
         details: 支持日历散点图，展示时间序列数据
 
       - title: 自定义地图
-        icon: material-symbols:map
+        icon: material-symbols:map-outline
         details: 支持自定义地图 GeoJSON 动态注册
 
       - title: 主题切换
-        icon: material-symbols:palette
+        icon: material-symbols:palette-outline
         details: 支持暗色/亮色主题切换
 
   - header: 重要特性
@@ -80,9 +80,9 @@ highlights:
         details: 内置基础静态托管服务，开箱即用
 
       - title: 服务端渲染
-        icon: server
-        details: 使用服务端渲染，无需复杂环境
+        icon: mdi:server-outline
+        details: 使用服务端渲染，客户端无需额外配置
 
 copyright: false
-footer: 基于 <a href="https://echarts.apache.org/" target="_blank">Apache ECharts</a> 构建 | Apache-2.0 Licensed
+footer: 基于 <a href="https://theme-hope.vuejs.press/" target="_blank">Vuepress Theme Hope</a> | Apache-2.0 Licensed
 ---
