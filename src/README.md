@@ -8,7 +8,7 @@ bgImageDark: https://theme-hope-assets.vuejs.press/bg/6-dark.svg
 bgImageStyle:
   background-attachment: fixed
 heroText: MCP-ECharts
-tagline: 基于 ECharts 的图表生成 MCP 服务
+tagline: 文档更新于 v1.4.0
 actions:
   - text: 快速开始
     icon: solar:play-bold-duotone

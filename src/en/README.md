@@ -8,7 +8,7 @@ bgImageDark: https://theme-hope-assets.vuejs.press/bg/6-dark.svg
 bgImageStyle:
   background-attachment: fixed
 heroText: MCP-ECharts
-tagline: MCP server for chart generation based on ECharts
+tagline: Updated to v1.4.0
 actions:
   - text: Quick Start
     icon: solar:play-bold-duotone
