@@ -1,10 +1,10 @@
 ---
-title: 模块简述
+title: 模块结构
 icon: codicon:file-submodule
 order: 2
 ---
 
-# 模块简述
+# 模块结构
 
 ```bash
 .
@@ -52,6 +52,6 @@ order: 2
   - `callbackUtil.ts`: 回调函数处理工具（主要是沙盒调用入口）
   - `fileOutput.ts`: 文件输出工具
   - `httpUtil.ts`: HTTP 工具
-  - `log.ts`: 日志工具（日志的封装，**你应使用这个模块输出日志**）
+  - `log.ts`: 日志工具（日志的封装，**你应使用这个模块[输出日志](./logging#日志模块)**）
   - `map.ts`: ECharts 地图工具
   - `vmUtil.ts`: 沙盒工具

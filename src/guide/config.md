@@ -11,6 +11,8 @@ order: 3
 - **(推荐)** [YAML 文件](#yaml)
 - [命令行参数](#命令行参数)
 
+**当你传入了同时传入了合法的 YAML 文件和命令行参数时，所有命令行配置将被忽略。**
+
 ## YAML
 
 YAML 文件对配置的管理更集中，可读性优良。
@@ -38,6 +40,10 @@ resource:
   host: 0.0.0.0
   baseUrl: http://localhost:11223
   geoJsonPath: /Path/To/GeoJsonDir
+
+logging:
+  consoleLevel: info
+  fileLevel: warn
 ```
 
 ### 可用项
@@ -62,6 +68,13 @@ resource:
 | `baseUrl`      | 内置 HTTP 静态托管服务的基础 URL | `http://127.0.0.1:1123` |
 | `geoJsonPath`  | GeoJSON 文件的目录路径           | `./geojson`             |
 
+- `logging` 块
+
+| 键             | 描述                                                           | 默认值 |
+| -------------- | -------------------------------------------------------------- | ------ |
+| `consoleLevel` | 控制台日志级别，支持 `trace`, `debug`, `info`, `warn`, `error` | `info` |
+| `fileLevel`    | 文件日志级别，支持 `trace`, `debug`, `info`, `warn`, `error`   | `warn` |
+
 ## 命令行参数
 
 你也可以通过命令行参数来配置 ECharts 服务，此处仅给出参数与 YAML 文件键的对应关系。
@@ -78,3 +91,24 @@ resource:
 | `--res-host`     | `resource.host`         |
 | `--res-base-url` | `resource.baseUrl`      |
 | `--geojson-path` | `resource.geoJsonPath`  |
+| `--log-console`  | `logging.consoleLevel`  |
+| `--log-file`     | `logging.fileLevel`     |
+
+## (已弃用) 环境变量
+
+出于兼容性考虑，我们保留了应用最初的环境变量配置方式，但已不再增加新的环境变量。**未来将移除环境变量配置**。
+
+| 环境变量        | YAML 路径               |
+| --------------- | ----------------------- |
+| `MCP_TRANSPORT` | `server.transport`      |
+| `MCP_PORT`      | `server.port`           |
+| `MCP_HOST`      | `server.host`           |
+| `MCP_CORS`      | `server.cors`           |
+| `RES_PATH`      | `resource.resourcePath` |
+| `RES_ENABLED`   | `resource.enabled`      |
+| `RES_PORT`      | `resource.port`         |
+| `RES_HOST`      | `resource.host`         |
+| `RES_BASE_URL`  | `resource.baseUrl`      |
+| `GEOJSON_PATH`  | `resource.geoJsonPath`  |
+| **不支持**      | `logging.consoleLevel`  |
+| **不支持**      | `logging.fileLevel`     |

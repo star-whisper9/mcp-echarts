@@ -7,24 +7,23 @@ footer: Translated by GPT-4.1
 
 # Quick Start
 
-## Development Guidelines
+## Contribution Guidelines
 
-When developing this project further, you should at least follow:
+When contributing this project further, you should at least follow:
 
 - This project uses [Semantic Versioning](https://semver.org/).
 - This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-- In **Stdio** transmission, **do not** output STDOUT logs.
 
 ## Getting Started
 
-### Project Location
+### Project Repo
 
 [Github](https://github.com/star-whisper9/mcp-echarts)
 [npm](https://www.npmjs.com/package/@starwhisper9/mcp-echarts)
 
 ### Environment
 
-- [ ] Node.js recommended version >= 20
+- [x] Node.js _recommended version >= 20_
 
 ### Installation
 
@@ -34,7 +33,7 @@ In the root directory of the source code:
 npm install
 ```
 
-### Predefined npm Scripts (Unix-like)
+### Predefined npm Scripts (for Unix-like env)
 
 - Build (will delete the previous build directory)
 

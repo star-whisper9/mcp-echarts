@@ -53,6 +53,6 @@ footer: Translated by GPT-4.1
   - `callbackUtil.ts`: Callback handling utilities (mainly sandbox invocation entry)
   - `fileOutput.ts`: File output utilities
   - `httpUtil.ts`: HTTP utilities
-  - `log.ts`: Logging utilities (**You should use this module for logging**)
+  - `log.ts`: Logging utilities (**You should use this module for [logging](./logging#logging-module)**)
   - `map.ts`: ECharts map utilities
   - `vmUtil.ts`: Sandbox utilities
