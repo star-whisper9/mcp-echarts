@@ -4,9 +4,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "npm start 调试",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start"],
+      "name": "调试",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["${workspaceFolder}/build/index.js"],
       "args": ["--config-path", "${workspaceFolder}/config.yaml"],
       "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal"
