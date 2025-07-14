@@ -4,8 +4,10 @@ import path from "path";
 import os from "os";
 
 const { transport } = config.server;
+const { logging } = config;
 
 export function initLogger() {
+  // 日志目录文件建立
   let logDir: string;
   if (process.platform === "win32") {
     logDir = path.join(
@@ -20,6 +22,7 @@ export function initLogger() {
   }
   const logFile = path.join(logDir, "mcp.log");
 
+  // 实际日志器配置
   if (transport === "stdio") {
     // Stdio 模式避免使用 console 输出
     log4js.configure({
@@ -34,7 +37,7 @@ export function initLogger() {
         },
       },
       categories: {
-        default: { appenders: ["file"], level: "warn" },
+        default: { appenders: ["file"], level: logging.fileLevel },
       },
     });
   } else {
@@ -51,12 +54,20 @@ export function initLogger() {
         fileFilter: {
           type: "logLevelFilter",
           appender: "file",
-          level: "warn",
+          level: logging.fileLevel,
         },
         console: { type: "console" },
+        consoleFilter: {
+          type: "logLevelFilter",
+          appender: "console",
+          level: logging.consoleLevel,
+        },
       },
       categories: {
-        default: { appenders: ["file", "console"], level: "info" },
+        default: {
+          appenders: ["fileFilter", "consoleFilter"],
+          level: "trace",
+        },
       },
     });
   }

@@ -50,12 +50,15 @@ export async function run(
         const sid = transport.sessionId;
         if (sid && clients[sid]) {
           try {
-            await mcpServer?.close();
+            // 先删除客户端记录，防止重复关闭
+            const client = clients[sid];
+            delete clients[sid];
+
+            // 然后关闭服务器
+            await client.server?.close();
           } catch (error) {
             log.error("[HTTP] Error closing connection:", error);
           }
-
-          delete clients[sid];
         }
       };
 
