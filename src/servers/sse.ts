@@ -10,7 +10,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 const { port, host, cors } = config.server;
-import { corsCheck } from "../utils/httpUtil.js";
+import { corsCheck, validation } from "../utils/httpUtil.js";
 
 /**
  * 运行 SSE Server
@@ -26,6 +26,8 @@ export async function run(mcpServer: Server, endpoint: string): Promise<void> {
     corsCheck(req, res, cors);
     next();
   });
+
+  app.use(validation);
 
   // SSE 建立连接
   app.get(endpoint, async (req: Request, res: Response) => {

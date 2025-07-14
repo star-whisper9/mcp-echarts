@@ -3,7 +3,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { randomUUID } from "node:crypto";
 
-import { corsCheck } from "../utils/httpUtil.js";
+import { corsCheck, validation } from "../utils/httpUtil.js";
 import { log } from "../utils/log.js";
 import { config } from "../models/config.js";
 import { InMemoryEventStore } from "@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js";
@@ -23,6 +23,8 @@ export async function run(
     corsCheck(req, res, cors);
     next();
   });
+
+  app.use(validation);
 
   app.post(endpoint, async (req: Request, res: Response) => {
     const sessionId = req.headers["mcp-session-id"] as string | undefined;

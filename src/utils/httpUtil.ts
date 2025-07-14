@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from "express";
 import http from "http";
 
 /**
@@ -26,4 +27,48 @@ export function corsCheck(
   } else {
     res.setHeader("Access-Control-Allow-Origin", origin || "*");
   }
+}
+
+/**
+ * 简单 Api Key 验证中间件
+ * @param req Request 对象
+ * @param res Response 对象
+ * @param next Next 函数
+ * @returns
+ */
+export function validation(req: Request, res: Response, next: NextFunction) {
+  const apiKey = process.env.API_KEY;
+  const key = req.headers["x-api-key"];
+
+  // 支持不设置 API key 的情况
+  if (!apiKey) {
+    next();
+  }
+
+  if (!key) {
+    res.status(401).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32000,
+        message: "Unauthorized: Missing API key",
+      },
+      id: req?.body?.id || null,
+    });
+    return;
+  }
+
+  // Bearer token格式检查
+  if (key !== process.env.API_KEY) {
+    res.status(403).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32000,
+        message: "Forbidden: Invalid API key",
+      },
+      id: req?.body?.id || null,
+    });
+    return;
+  }
+
+  next();
 }
