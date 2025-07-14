@@ -12,3 +12,7 @@ resource:
   host: 0.0.0.0
   baseUrl: http://localhost:11223
   geoJsonPath: /Path/To/GeoJsonDir
+
+logging:
+  consoleLevel: info
+  fileLevel: warn
